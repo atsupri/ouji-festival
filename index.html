@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>厚木王子 文化祭アプリ</title>
 
-    <!-- Firebase SDK（メール/パスワード認証とRealtime Database用） -->
+    <!-- Firebase SDK（Googleログインとデータベース用） -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -144,53 +144,27 @@
             z-index: 1000;
         }
         .app-title { font-size: 1.05rem; font-weight: bold; letter-spacing: 0.05em; cursor: pointer; user-select: none; }
-        /* 🔐 メールアドレス＋パスワード認証 */
-        .email-auth-box {
+        /* Google ログインモーダル内のスタイル */
+        .google-auth-box {
             text-align: center;
             padding: 10px 0;
         }
-        .auth-input {
-            width: 100%;
-            padding: 12px;
+        .google-auth-btn {
+            background-color: #ffffff;
+            color: var(--text-main);
             border: 1px solid var(--border);
-            border-radius: 8px;
-            font-size: 0.9rem;
-            margin-top: 8px;
-            outline: none;
-            background: #fff;
-        }
-        .auth-input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(30,58,138,0.08);
-        }
-        .auth-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
             padding: 12px 20px;
             border-radius: 8px;
             font-size: 0.9rem;
             font-weight: bold;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             width: 100%;
             margin-top: 10px;
-        }
-        .auth-btn.logout {
-            background: #fef2f2;
-            color: #dc2626;
-            border: 1px solid #fca5a5;
-        }
-        .auth-error {
-            display: none;
-            color: #b91c1c;
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            border-radius: 8px;
-            padding: 9px;
-            margin-top: 10px;
-            font-size: 0.78rem;
-            line-height: 1.5;
-            text-align: left;
         }
         /* メニューボタンの親要素 */
         .menu-btn-wrapper {
@@ -399,8 +373,8 @@
             <button onclick="openModal('modal-rules')"><i class="fa-solid fa-circle-exclamation"></i> お知らせとお願い</button>
             <button onclick="openModal('modal-push')"><i class="fa-solid fa-bell"></i> スマホ通知設定</button>
             
-            <button onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSc-P42PTdaXDeCKBQt3gsu302z9rG9pF2GA4Pe_Lw6BBSyGAA/viewform?usp=header', '_blank')" style="color: #047857;">
-                <i class="fa-solid fa-envelope"></i> ご意見・改善点フォーム
+            <button onclick="window.open('https://docs.google.com/forms/d/e/YOUR_GOOGLE_FORM_ID/viewform?usp=sf_link', '_blank')" style="color: #047857;">
+                <i class="fa-solid fa-envelope"></i> お問い合わせフォーム
             </button>
         </nav>
     </aside>
@@ -444,36 +418,21 @@
                 <h3>🔑 関係者・管理者ログイン</h3>
                 <button onclick="closeModal('modal-auth')">&times;</button>
             </div>
-            <div class="email-auth-box">
+            <div class="google-auth-box">
                 <div id="auth-unlogged" style="display: none;">
-                    <p style="font-size: 0.85rem; color: var(--text-sub); line-height:1.5;">
-                        関係者用のメールアドレスとパスワードでログインしてください。
-                    </p>
-                    <input id="auth-email" class="auth-input" type="email" autocomplete="username"
-                           placeholder="メールアドレス" inputmode="email">
-                    <input id="auth-password" class="auth-input" type="password" autocomplete="current-password"
-                           placeholder="パスワード">
-                    <div id="auth-error" class="auth-error"></div>
-                    <button class="auth-btn" onclick="handleEmailPasswordLogin()">
-                        🔐 ログイン
-                    </button>
-                    <button class="auth-btn" style="background:#f3f4f6;color:var(--text-main);" onclick="handlePasswordReset()">
-                        パスワードを忘れた場合
+                    <p style="font-size: 0.85rem; color: var(--text-sub);">Googleアカウントでサインインして、各種管理機能を利用します。</p>
+                    <button class="google-auth-btn" onclick="handleGoogleLogin()">
+                        <i class="fa-brands fa-google"></i> Googleでログイン
                     </button>
                 </div>
-
                 <div id="auth-logged" style="display: none;">
                     <p style="font-size: 0.85rem; color: var(--text-sub);">ログイン中のアカウント:</p>
-                    <p id="user-display-name" style="font-weight: bold; font-size: 1rem; margin: 8px 0; color: var(--primary); word-break:break-all;"></p>
-                    <p id="admin-status-text" style="font-size:0.78rem;font-weight:bold;margin:6px 0;"></p>
-
-                    <button class="auth-btn logout" onclick="handleEmailLogout()">
+                    <p id="user-display-name" style="font-weight: bold; font-size: 1rem; margin: 8px 0; color: var(--primary);"></p>
+                    <button class="google-auth-btn" style="background: #fef2f2; color: #dc2626; border-color: #fca5a5;" onclick="handleGoogleLogout()">
                         ログアウト
                     </button>
-
                     <hr style="margin: 15px 0; border: none; border-top: 1px dashed var(--border);">
-
-                    <button id="admin-panel-open-btn" class="auth-btn" style="display:none;" onclick="openAdminPanelFromAuth()">
+                    <button class="google-auth-btn" style="background: var(--primary); color: white;" onclick="openAdminPanelFromAuth()">
                         🛠️ 管理者パネルを開く
                     </button>
                 </div>
@@ -620,8 +579,6 @@
             firebase.initializeApp(firebaseConfig);
         }
         const FIREBASE_DB_URL = "https://ouji-app-default-rtdb.firebaseio.com/broadcast.json";
-        const FIREBASE_BROADCAST_REF = firebase.database().ref("broadcast");
-        const FIREBASE_ADMINS_REF = firebase.database().ref("admins");
         const MAP_IMAGES = {
             '1F': 'map1f.png',
             '2F': 'map2f.png',
@@ -742,23 +699,13 @@
             initAuthListener();
             checkRedirectResult();
             
-            const emailInput = document.getElementById('auth-email');
-            const passwordInput = document.getElementById('auth-password');
-            [emailInput, passwordInput].forEach(input => {
-                if (input) {
-                    input.addEventListener('keydown', (event) => {
-                        if (event.key === 'Enter') handleEmailPasswordLogin();
-                    });
-                }
-            });
-
             const noticeContainer = document.getElementById('notice-list-container');
             if (noticeContainer) {
                 noticeContainer.innerHTML = noticeData.map(d => `<li class="greeting-card"><b>${d.title}</b><span style="display:block;color:var(--text-sub);font-size:0.8rem;margin-top:4px;">${d.sub}</span></li>`).join('');
             }
             
-            // Firebase Realtime Databaseの変更をリアルタイム監視
-            initBroadcastListener(); 
+            setInterval(syncCloudAndCheckAlert, 3000);
+            syncCloudAndCheckAlert(); 
         };
         // --- 🔐 5回タップ処理 ---
         function handleTitleTap() {
@@ -770,196 +717,49 @@
             }
             titleTapTimeout = setTimeout(() => { titleTapCount = 0; }, 2000);
         }
-        // --- 🔐 メールアドレス＋パスワード認証 / UIDベース管理者判定 ---
-        let currentUserIsAdmin = false;
-
-        function showAuthError(message) {
-            const el = document.getElementById('auth-error');
-            if (!el) return;
-            el.innerText = message;
-            el.style.display = 'block';
-        }
-
-        function clearAuthError() {
-            const el = document.getElementById('auth-error');
-            if (!el) return;
-            el.innerText = '';
-            el.style.display = 'none';
-        }
-
-        function setAdminPanelButtonVisible(visible) {
-            const btn = document.getElementById('admin-panel-open-btn');
-            if (btn) btn.style.display = visible ? 'block' : 'none';
-
-            const status = document.getElementById('admin-status-text');
-            if (status) {
-                status.innerText = visible
-                    ? '🛡️ 管理者権限：有効'
-                    : '👤 一般ログイン：管理者権限なし';
-                status.style.color = visible ? '#166534' : '#6b7280';
-            }
-        }
-
-        async function checkAdminRole(user) {
-            if (!user) {
-                currentUserIsAdmin = false;
-                setAdminPanelButtonVisible(false);
-                return false;
-            }
-
-            try {
-                // 自分のUIDだけを確認する。
-                // Firebase Rules側でも admins/{uid} の読み取りを本人だけに制限する。
-                const snapshot = await firebase.database()
-                    .ref('admins/' + user.uid + '/role')
-                    .once('value');
-
-                currentUserIsAdmin = snapshot.val() === 'admin';
-                setAdminPanelButtonVisible(currentUserIsAdmin);
-
-                console.log(
-                    currentUserIsAdmin
-                        ? '管理者として認証されました。UID:'
-                        : '一般ユーザーとしてログインしています。UID:',
-                    user.uid
-                );
-
-                return currentUserIsAdmin;
-            } catch (error) {
-                console.error('管理者権限確認エラー:', error);
-                currentUserIsAdmin = false;
-                setAdminPanelButtonVisible(false);
-                return false;
-            }
-        }
-
+        // --- 🔐 Google Auth 認証処理 ---
         function initAuthListener() {
-            firebase.auth().onAuthStateChanged(async (user) => {
+            firebase.auth().onAuthStateChanged((user) => {
                 const unloggedEl = document.getElementById('auth-unlogged');
                 const loggedEl = document.getElementById('auth-logged');
                 const displayNameEl = document.getElementById('user-display-name');
-
-                clearAuthError();
-
-                if (!user) {
-                    currentUserIsAdmin = false;
-
+                if (user) {
+                    if (unloggedEl) unloggedEl.style.display = 'none';
+                    if (loggedEl) loggedEl.style.display = 'block';
+                    if (displayNameEl) displayNameEl.innerText = user.displayName || user.email;
+                } else {
                     if (unloggedEl) unloggedEl.style.display = 'block';
                     if (loggedEl) loggedEl.style.display = 'none';
                     if (displayNameEl) displayNameEl.innerText = '';
-
-                    setAdminPanelButtonVisible(false);
-                    return;
                 }
-
-                if (unloggedEl) unloggedEl.style.display = 'none';
-                if (loggedEl) loggedEl.style.display = 'block';
-                if (displayNameEl) displayNameEl.innerText = user.email || 'ログイン中';
-
-                await checkAdminRole(user);
             });
         }
-
-        async function handleEmailPasswordLogin() {
-            const emailEl = document.getElementById('auth-email');
-            const passwordEl = document.getElementById('auth-password');
-
-            const email = emailEl ? emailEl.value.trim() : '';
-            const password = passwordEl ? passwordEl.value : '';
-
-            clearAuthError();
-
-            if (!email || !password) {
-                showAuthError('メールアドレスとパスワードを入力してください。');
-                return;
-            }
-
-            try {
-                // ブラウザを閉じても認証状態を維持
-                await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-
-                await firebase.auth().signInWithEmailAndPassword(email, password);
-
-                if (passwordEl) passwordEl.value = '';
-
-            } catch (error) {
-                console.error('Login Error:', error);
-
-                const messages = {
-                    'auth/invalid-email': 'メールアドレスの形式が正しくありません。',
-                    'auth/user-disabled': 'このアカウントは無効になっています。',
-                    'auth/user-not-found': 'アカウントが見つかりません。',
-                    'auth/wrong-password': 'パスワードが正しくありません。',
-                    'auth/invalid-credential': 'メールアドレスまたはパスワードが正しくありません。',
-                    'auth/too-many-requests': 'ログイン試行が多すぎます。しばらく待ってから再試行してください。'
-                };
-
-                showAuthError(messages[error.code] || 'ログインに失敗しました。時間をおいて再試行してください。');
-            }
+        function handleGoogleLogin() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            provider.setCustomParameters({ prompt: 'select_account' });
+            firebase.auth().signInWithRedirect(provider);
         }
-
-        async function handlePasswordReset() {
-            const emailEl = document.getElementById('auth-email');
-            const email = emailEl ? emailEl.value.trim() : '';
-
-            clearAuthError();
-
-            if (!email) {
-                showAuthError('先にメールアドレスを入力してください。');
-                return;
-            }
-
-            try {
-                await firebase.auth().sendPasswordResetEmail(email);
-                alert('パスワード再設定メールを送信しました。メールをご確認ください。');
-            } catch (error) {
-                console.error('Password Reset Error:', error);
-
-                if (error.code === 'auth/user-not-found') {
-                    showAuthError('このメールアドレスのアカウントが見つかりません。');
-                } else if (error.code === 'auth/invalid-email') {
-                    showAuthError('メールアドレスの形式が正しくありません。');
-                } else {
-                    showAuthError('パスワード再設定メールの送信に失敗しました。');
+        function checkRedirectResult() {
+            firebase.auth().getRedirectResult().then((result) => {
+                if (result && result.user) {
+                    alert("ログインしました。");
                 }
-            }
+            }).catch((error) => {
+                console.error("Login Error:", error);
+                alert("Googleログインに失敗しました。");
+            });
         }
-
-        async function handleEmailLogout() {
-            try {
-                await firebase.auth().signOut();
-                alert('ログアウトしました。');
-            } catch (error) {
-                console.error('Logout Error:', error);
-                alert('ログアウトに失敗しました。');
-            }
+        function handleGoogleLogout() {
+            firebase.auth().signOut().then(() => {
+                alert("ログアウトしました。");
+            }).catch((error) => {
+                console.error("Logout Error:", error);
+            });
         }
-
-        async function openAdminPanelFromAuth() {
-            const user = firebase.auth().currentUser;
-
-            if (!user) {
-                alert('ログインしてください。');
-                return;
-            }
-
-            // UIだけでなく、管理画面を開く瞬間にも再確認
-            const isAdmin = await checkAdminRole(user);
-
-            if (!isAdmin) {
-                alert('管理者権限がありません。');
-                return;
-            }
-
+        function openAdminPanelFromAuth() {
             closeModal('modal-auth');
             initAdminSelect();
             openModal('modal-admin');
-        }
-
-        function checkRedirectResult() {
-            // メール/パスワード方式ではリダイレクトログインを使用しない。
-            // 旧Googleログインの残りセッションがあっても、onAuthStateChangedで処理する。
-            return Promise.resolve();
         }
         function checkMenuHintBalloon() {
             const hasSeenHint = localStorage.getItem('menu_hint_balloon_seen');
@@ -1393,112 +1193,73 @@
             
             triggerDelayNotification(targetName, finalMinutes);
         }
-        async function triggerDelayNotification(targetName, delayValue) {
-            const user = firebase.auth().currentUser;
-
-            if (!user) {
-                alert('ログインしてください。');
-                return;
-            }
-
-            // 書き込み直前にも管理者権限を再確認
-            const isAdmin = await checkAdminRole(user);
-            if (!isAdmin) {
-                alert('管理者権限がありません。配信できません。');
-                return;
-            }
-
-            const broadcastPayload = {
-                target: targetName,
-                delay: delayValue,
-                timestamp: firebase.database.ServerValue.TIMESTAMP
+        function triggerDelayNotification(targetName, delayValue) {
+            const broadcastPayload = { 
+                target: targetName, 
+                delay: delayValue, 
+                timestamp: Date.now()
             };
-
-            try {
-                await FIREBASE_BROADCAST_REF.set(broadcastPayload);
-
-                alert(
-                    `【一斉配信成功】\n「${targetName}」の遅延状況を「${delayValue}」として配信しました！`
-                );
-
-                closeModal('modal-admin');
-
-            } catch (error) {
-                console.error('Broadcast Error:', error);
-
-                if (error.code === 'PERMISSION_DENIED') {
-                    alert(
-                        '配信権限がありません。\n' +
-                        '管理者として登録されたアカウントか確認してください。'
-                    );
+            fetch(FIREBASE_DB_URL, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(broadcastPayload)
+            })
+            .then(response => {
+                if(response.ok) {
+                    alert(`【一斉配信成功】\n「${targetName}」の遅延状況を「${delayValue}」として配信しました！`);
+                    closeModal('modal-admin');
                 } else {
-                    alert('配信エラーが発生しました。');
+                    alert("配信エラーが発生しました。");
                 }
-            }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("通信エラーが発生しました。");
+            });
         }
-        function applyBroadcastData(data) {
-            if (!data) {
-                currentActiveServerDelay = null;
-                isInitialLoad = false;
-                refreshGlobalAlertBarDisplay();
-                return;
-            }
-
-            currentActiveServerDelay = data;
-
-            timeScheduleData.forEach(slot => {
-                if (slot.name === data.target) {
-                    if (slot.delay !== data.delay) {
-                        slot.delay = data.delay;
-                        renderTimeSchedule();
-
-                        localStorage.removeItem('alert_bar_hidden_by_user');
-                        refreshGlobalAlertBarDisplay();
-
-                        if (!isInitialLoad && data.delay !== "0") {
-                            const lastSeenPopupKey =
-                                `popup_seen_${data.target}_${data.delay}_${data.timestamp}`;
-
-                            if (!localStorage.getItem(lastSeenPopupKey)) {
-                                const msg =
-                                    `【進行変更】\n「${data.target}」に、現在【${data.delay}】の遅れが発生しています！`;
-
-                                const alertTextEl = document.getElementById('sync-alert-text');
-                                if (alertTextEl) alertTextEl.innerText = msg;
-
-                                openModal('modal-sync-alert');
-                                localStorage.setItem(lastSeenPopupKey, 'true');
+        function syncCloudAndCheckAlert() {
+            fetch(FIREBASE_DB_URL)
+            .then(response => {
+                if (!response.ok) return null;
+                return response.json();
+            })
+            .then(data => {
+                if (!data) {
+                    isInitialLoad = false;
+                    return;
+                }
+                currentActiveServerDelay = data;
+                timeScheduleData.forEach(slot => {
+                    if (slot.name === data.target) {
+                        if (slot.delay !== data.delay) {
+                            slot.delay = data.delay;
+                            renderTimeSchedule();
+                            
+                            localStorage.removeItem('alert_bar_hidden_by_user');
+                            refreshGlobalAlertBarDisplay();
+                            
+                            if (!isInitialLoad && data.delay !== "0") {
+                                const lastSeenPopupKey = `popup_seen_${data.target}_${data.delay}_${data.timestamp}`;
+                                if (!localStorage.getItem(lastSeenPopupKey)) {
+                                    const msg = `【進行変更】\n「${data.target}」に、現在【${data.delay}】の遅れが発生しています！`;
+                                    
+                                    const alertTextEl = document.getElementById('sync-alert-text');
+                                    if (alertTextEl) alertTextEl.innerText = msg;
+                                    openModal('modal-sync-alert');
+                                    localStorage.setItem(lastSeenPopupKey, 'true'); 
+                                }
                             }
                         }
                     }
-                }
-            });
-
-            isInitialLoad = false;
-            refreshGlobalAlertBarDisplay();
-        }
-
-        function initBroadcastListener() {
-            FIREBASE_BROADCAST_REF.on(
-                'value',
-                (snapshot) => {
-                    applyBroadcastData(snapshot.val());
-                },
-                (error) => {
-                    console.error('Broadcast read error:', error);
-                    isInitialLoad = false;
-                }
-            );
-        }
-
-        // 互換用：既存コードから呼ばれても動作する
-        function syncCloudAndCheckAlert() {
-            FIREBASE_BROADCAST_REF.once('value')
-                .then(snapshot => applyBroadcastData(snapshot.val()))
-                .catch(error => {
-                    console.error('Broadcast sync error:', error);
-                    isInitialLoad = false;
                 });
+                isInitialLoad = false;
+                refreshGlobalAlertBarDisplay();
+            })
+            .catch(err => {
+                isInitialLoad = false;
+            });
         }
         function refreshGlobalAlertBarDisplay() {
             if (!currentActiveServerDelay) return;
