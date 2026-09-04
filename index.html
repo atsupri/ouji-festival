@@ -4024,7 +4024,6 @@ function renderShops(){
         container.appendChild(card);
     });
 }
-
 function panToCoordinates(
     x,
     y,
@@ -4032,28 +4031,51 @@ function panToCoordinates(
     targetFloor
 ){
 
+    // マップページへ移動
+    switchPage("map-page");
+
+    // 対象のお店の階へ切り替え
     if(currentFloor!==targetFloor){
 
         switchFloor(targetFloor);
+
+    }else{
+
+        // 同じ階なら店舗一覧だけ再描画
+        renderShops();
+        updateMapFloorImage();
     }
 
+    // マップ・店舗一覧の更新を待ってから移動
     setTimeout(()=>{
 
+        if(!map)return;
+
+        // マップサイズを再計算
+        map.invalidateSize();
+
+        // お店の位置へ移動
         map.setView(
             [y,x],
             -.2
         );
 
+        // ピンを強調
         highlightPin(shopId);
 
+        // マップ上のポップアップを表示
         if(markerObjectsMap[shopId]){
 
             markerObjectsMap[shopId]
                 .openPopup();
         }
 
-    },300);
+        // 下の店舗詳細を開く
+        openShopDetailFromMap(shopId);
 
+    },400);
+
+    // マップページを表示した直後は上から表示
     const scrollArea=
         document.querySelector(
             "#map-page .scrollable-content"
