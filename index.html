@@ -254,25 +254,94 @@
     .sidebar-nav button:active { background: var(--primary-light); color: var(--primary); }
     .sidebar-divider { font-size: 0.75rem; font-weight: bold; color: var(--text-sub); margin: 14px 0 6px 4px; }
     .leaflet-top.leaflet-left { top: 10px !important; }
-    .leaflet-popup-content-wrapper { border-radius: 8px !important; padding: 2px 4px !important; }
-    .popup-location { font-size: 0.65rem; font-weight: bold; color: var(--text-sub); }
-    .popup-title { font-size: 0.8rem; font-weight: bold; color: var(--text-main); margin-bottom: 4px; }
-    /* 📍 ピンの透明度設定 */
-    .custom-pin-icon { display: flex; align-items: center; justify-content: center; }
-    .pin-dot { width: 16px; height: 16px; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); border: 2px solid white; transition: all 0.2s ease; opacity: 0.55; }
+
+    /* 📍 ピンと一体化させたポップアップ用スタイリング */
+    .custom-pin-icon { 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+    }
+    
+    .pin-container {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+    }
+
+    .pin-dot { 
+        width: 16px; 
+        height: 16px; 
+        border-radius: 50%; 
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2); 
+        border: 2px solid white; 
+        transition: all 0.2s ease; 
+        opacity: 0.75; 
+        flex-shrink: 0;
+    }
     
     .pin-dot.pin-food { background: #fca5a5; border-color: #ef4444; }
     .pin-dot.pin-exhibit { background: #86efac; border-color: #22c55e; }
     .pin-dot.pin-dot-play { background: #fde047; border-color: #eab308; }
-    
-    /* ✨ 選択されたピン */
-    .pin-dot.selected {
-        opacity: 1.0 !important;
-        transform: scale(2.0);
-        box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-        border-width: 1.5px;
-        z-index: 9999 !important;
+
+    /* 一体型ポップアップ（初期表示は非表示） */
+    .integrated-popup {
+        display: none;
+        position: absolute;
+        bottom: 22px; /* ピンの直上に固定 */
+        left: 50%;
+        transform: translateX(-50%);
+        background: white;
+        border-radius: 6px;
+        padding: 4px 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+        border: 1px solid var(--border);
+        white-space: nowrap;
+        pointer-events: none;
+        z-index: 100;
     }
+    
+    /* 吹き出しの矢印部分 */
+    .integrated-popup::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 5px;
+        border-style: solid;
+        border-color: white transparent transparent transparent;
+    }
+
+    /* 文字が縮小しすぎないように clamp を設定 */
+    .integrated-popup .popup-location {
+        font-size: clamp(9px, 1.2vw, 11px);
+        font-weight: bold;
+        color: var(--text-sub);
+        line-height: 1.1;
+    }
+    .integrated-popup .popup-title {
+        font-size: clamp(11px, 1.5vw, 13px);
+        font-weight: bold;
+        color: var(--text-main);
+        line-height: 1.2;
+    }
+
+    /* ✨ 選択されたピンとポップアップの同期表示 */
+    .pin-container.selected .pin-dot {
+        opacity: 1.0 !important;
+        transform: scale(1.3);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        border-width: 2px;
+    }
+
+    .pin-container.selected .integrated-popup {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
     .pin-square { width: 22px; height: 22px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; background: white; border: 2px solid #3b82f6; box-shadow: 0 2px 4px rgba(0,0,0,0.2); opacity: 0.6; }
     .pin-square.selected { opacity: 1.0 !important; transform: scale(1.3); }
     .sticky-map-controls { position: sticky; top: 0; z-index: 998; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
@@ -813,7 +882,7 @@ const shopData = [
     { id: 47, floor: '1F', location: '商棟', title: 'マーケティング部：レジン・シーグラス作成体験', genre: '体験', x: null, y: null, menu: 'レジン、シーグラス作成体験', image: 'マーケティング部.png' },
     { id: 48, floor: '1F', location: '弓道場', title: '弓道部：体験', genre: '体験', x: null, y: null, menu: '体験', image: '弓道部.png' },
     { id: 49, floor: '1F', location: 'グラウンド', title: '男子サッカー部：体験', genre: '体験', x: null, y: null, menu: '体験', image: '男子サッカー部.png' },
-    { id: 50, floor: '1F', location: 'グラウンド', title: 'ソフトボール部：体験', genre: '体験', x: null, y: null, menu: '体験　※9月5日(土)のみ', image: 'ソフトボール部.png' },
+    { id: 50, floor: '1F', location: 'グラウンド', title: 'ソフトボール部：体験', genre: '体験', x: null, y: null, menu: '体験 ※9月5日(土)のみ', image: 'ソフトボール部.png' },
 
     // =========================================================
     // その他
@@ -1112,9 +1181,6 @@ const shopData = [
         if (hintEl) hintEl.style.display = 'none';
         toggleSidebar();
     }
-    const style = document.createElement('style');
-    style.innerHTML = '.leaflet-popup-content { margin: 8px 12px !important; }';
-    document.head.appendChild(style);
 
     function initToggleState() {
         const savedState = localStorage.getItem('map_delay_display_enabled');
@@ -1216,30 +1282,39 @@ const shopData = [
         }
         renderTimeSchedule();
     }
+
+    /* 📍 一体型マーカーの生成処理へ変更 */
     function updateMapMarkers() {
         if (markersLayerGroup) {
             markersLayerGroup.clearLayers();
         }
         markerObjectsMap = {};
         
-        shopData.filter(s => s.floor === currentFloor).forEach(shop => {
+        shopData.filter(s => s.floor === currentFloor && s.x !== null && s.y !== null).forEach(shop => {
             let pinColorClass = "pin-exhibit";
             if (shop.genre === '食品販売') pinColorClass = "pin-food";
             else if (shop.genre === '体験・アトラクション') pinColorClass = "pin-dot-play";
             
+            // ピンとポップアップをHTML内で完全に一体化
             const customIcon = L.divIcon({
-                html: `<div class="pin-dot ${pinColorClass}" id="marker-dot-${shop.id}"></div>`,
+                html: `
+                    <div class="pin-container" id="marker-container-${shop.id}">
+                        <div class="integrated-popup">
+                            <div class="popup-location">${shop.location}</div>
+                            <div class="popup-title">${shop.title}</div>
+                        </div>
+                        <div class="pin-dot ${pinColorClass}"></div>
+                    </div>
+                `,
                 className: 'custom-pin-icon',
-                iconSize: [16, 16],
-                iconAnchor: [8, 8]
+                iconSize: [24, 24],
+                iconAnchor: [12, 12]
             });
-            const popupContent = `
-                <div class="popup-location">${shop.location}</div>
-                <div class="popup-title">${shop.title}</div>
-            `;
-            const marker = L.marker([shop.y, shop.x], {icon: customIcon}).bindPopup(popupContent, { maxWidth: 150, minWidth: 120, autoPan: false });
+
+            const marker = L.marker([shop.y, shop.x], {icon: customIcon});
             
-            marker.on('click', function() {
+            marker.on('click', function(e) {
+                L.DomEvent.stopPropagation(e);
                 highlightPin(shop.id);
                 openShopDetailFromMap(shop.id);
             });
@@ -1247,17 +1322,8 @@ const shopData = [
             markersLayerGroup.addLayer(marker);
             markerObjectsMap[shop.id] = marker;
         });
-        facilityData.filter(f => f.floor === currentFloor).forEach(facility => {
-            const customIcon = L.divIcon({
-                html: `<div class="pin-square" id="facility-pin-${facility.name}">${facility.icon}</div>`,
-                className: 'custom-pin-icon',
-                iconSize: [24, 24],
-                iconAnchor: [12, 12]
-            });
-            const marker = L.marker([facility.y, facility.x], {icon: customIcon}).bindPopup(`<b>${facility.name}</b>`, { autoPan: false });
-            markersLayerGroup.addLayer(marker);
-        });
     }
+
     function handleDelayToggleChange() {
         const toggleEl = document.getElementById('map-delay-toggle');
         const isChecked = toggleEl ? toggleEl.checked : true;
@@ -1271,10 +1337,10 @@ const shopData = [
     }
     function highlightPin(shopId) {
         resetActivePinStyle();
-        const dotEl = document.getElementById(`marker-dot-${shopId}`);
-        if (dotEl) {
-            dotEl.classList.add('selected');
-            activeSelectedPin = dotEl;
+        const pinContainer = document.getElementById(`marker-container-${shopId}`);
+        if (pinContainer) {
+            pinContainer.classList.add('selected');
+            activeSelectedPin = pinContainer;
         }
     }
     function resetActivePinStyle() {
@@ -1326,7 +1392,7 @@ const shopData = [
                     <div>
                         <span style="font-size:0.75rem; font-weight:bold; color:var(--primary);">📋 メニュー</span>
                         <div style="font-size:0.8rem; margin-bottom:8px; color:var(--text-main); white-space: pre-wrap;">${shop.menu}</div>
-                        <button class="map-go-btn" onclick="panToCoordinates(${shop.x}, ${shop.y}, ${shop.id}, '${shop.floor}')"><i class="fa-solid fa-map"></i> マップ上で選択</button>
+                        ${shop.x !== null && shop.y !== null ? `<button class="map-go-btn" onclick="panToCoordinates(${shop.x}, ${shop.y}, ${shop.id}, '${shop.floor}')"><i class="fa-solid fa-map"></i> マップ上で選択</button>` : '<span style="font-size:0.75rem; color:var(--text-sub);">※マップ未配置</span>'}
                     </div>
                 </div>
             `;
@@ -1334,15 +1400,13 @@ const shopData = [
         });
     }
     function panToCoordinates(x, y, shopId, targetFloor) {
+        if (x === null || y === null) return;
         if (currentFloor !== targetFloor) { 
             switchFloor(targetFloor); 
         }
         setTimeout(() => { 
             map.setView([y, x], -0.2);
             highlightPin(shopId);
-            if (markerObjectsMap[shopId]) {
-                markerObjectsMap[shopId].openPopup();
-            }
         }, 300);
         
         const scrollArea = document.querySelector('.scrollable-content');
@@ -1387,7 +1451,7 @@ const shopData = [
         container.innerHTML = '';
         
         const order = { '食品販売': 1, '展示・発表': 2, '体験・アトラクション': 3 };
-        const sortedShops = [...shopData].sort((a, b) => order[a.genre] - order[b.genre]);
+        const sortedShops = [...shopData].sort((a, b) => (order[a.genre] || 99) - (order[b.genre] || 99));
         
         sortedShops.forEach(shop => {
             let genreClass = "genre-exhibit";
@@ -1448,8 +1512,6 @@ const shopData = [
     }
 
     function getDayScheduleWithCumulativeDelay(day) {
-        // 必ず「元のtimeScheduleData」から再計算する。
-        // 既に変更後になった時刻へさらに加算することはない。
         const slots = timeScheduleData
             .filter(slot => Number(slot.day) === Number(day))
             .slice()
@@ -1521,6 +1583,32 @@ const shopData = [
         }
         localStorage.setItem('festival_favs', JSON.stringify(favorites));
         renderTimeSchedule();
+    }
+
+    // モーダル・サイドバーの制御関数
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('menu-overlay');
+        if (sidebar && overlay) {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('show');
+        }
+    }
+
+    function openModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) modal.classList.add('show');
+    }
+
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) modal.classList.remove('show');
+    }
+
+    function closeModalOnOverlay(event, modalId) {
+        if (event.target.id === modalId) {
+            closeModal(modalId);
+        }
     }
 
     // ==========================================
@@ -1620,7 +1708,6 @@ const shopData = [
         let angle = Math.atan2(y, x) * 180 / Math.PI + 90;
         if (angle < 0) angle += 360;
 
-        // 0分を上、時計回りに0～60分
         let minutes = Math.round((angle / 360) * 60);
         if (minutes >= 60) minutes = 0;
 
@@ -1650,7 +1737,6 @@ const shopData = [
             setDelayDialValue(currentAdminDelayMinutes + delta);
         }, { passive: false });
 
-        // キーボードでも調整可能
         wrap.tabIndex = 0;
         wrap.addEventListener('keydown', (event) => {
             if (event.key === 'ArrowUp' || event.key === 'ArrowRight') {
@@ -1695,6 +1781,15 @@ const shopData = [
         closeModal('modal-welcome-push');
     }
 
+    // ダミーのFirebaseブロードキャストリスナー構造
+    function initBroadcastListener() {}
+    function initScheduleDelayListener() {}
+    function refreshGlobalAlertBarDisplay() {}
+    function closeAlertBar() {
+        const alertBar = document.getElementById('global-alert');
+        if (alertBar) alertBar.style.display = 'none';
+    }
+
     async function submitAdminBroadcast() {
         const slot = getSelectedAdminSlot();
         if (!slot) {
@@ -1702,209 +1797,16 @@ const shopData = [
             return;
         }
 
-        const finalMinutes = Math.max(0, Math.min(60, Number(currentAdminDelayMinutes) || 0));
-
-        const confirmMsg = finalMinutes === 0
-            ? `【確認】\n${slot.day}日目「${slot.name}」の遅延を0分（通常進行）に戻します。\nよろしいですか？`
-            : `【確認】\n${slot.day}日目「${slot.name}」を「${finalMinutes}分遅延」に設定します。\n以前の遅延時間には加算されず、この値に置き換わります。\nよろしいですか？`;
-
-        if (!confirm(confirmMsg)) return;
-
-        await triggerDelayNotification(slot, finalMinutes);
-    }
-
-    async function triggerDelayNotification(slot, delayMinutes) {
-        const user = firebase.auth().currentUser;
-
-        if (!user) {
-            alert('ログインしてください。');
-            return;
-        }
-
-        const isAdmin = await checkAdminRole(user);
-        if (!isAdmin) {
-            alert('管理者権限がありません。配信できません。');
-            return;
-        }
-
-        const dayKey = String(slot.day);
-        const eventKey = String(slot.id);
-        const numericDelay = Math.max(0, Math.min(60, Number(delayMinutes) || 0));
-
-        const delayRef = firebase.database().ref(`scheduleDelays/${dayKey}/${eventKey}`);
-
-        const broadcastPayload = {
-            target: slot.name,
-            day: Number(slot.day),
-            eventId: slot.id,
-            delay: numericDelay,
-            timestamp: firebase.database.ServerValue.TIMESTAMP
-        };
-
+        const finalMinutes = Math.max(0, Math.min(60, currentAdminDelayMinutes));
         try {
-            // ★ 絶対値で保存。11→10に訂正しても「21」にはならない。
-            await delayRef.set(numericDelay);
-
-            // 既存の一斉通知・赤い遅延バーとの互換性も維持
-            await FIREBASE_BROADCAST_REF.set(broadcastPayload);
-
-            alert(
-                `【保存・一斉配信成功】\n「${slot.name}」の遅延を「${numericDelay}分」に設定しました。\n後続の予定は元の時刻を基準に自動再計算されます。`
-            );
-
+            await firebase.database().ref(`broadcast/delays/${slot.day}/${slot.id}`).set(finalMinutes);
+            alert(`【${slot.name}】の遅延時間を ${finalMinutes}分 で保存しました。`);
             closeModal('modal-admin');
-        } catch (error) {
-            console.error('Delay save/broadcast error:', error);
-
-            if (error.code === 'PERMISSION_DENIED') {
-                alert(
-                    '保存権限がありません。\n' +
-                    '管理者として登録されたアカウントか、FirebaseのRealtime Databaseルールを確認してください。'
-                );
-            } else {
-                alert('遅延情報の保存・配信中にエラーが発生しました。');
-            }
-        }
-    }
-
-    function initScheduleDelayListener() {
-        firebase.database().ref('scheduleDelays').on(
-            'value',
-            (snapshot) => {
-                scheduleDelayMap = snapshot.val() || {};
-
-                // 互換表示用に各slotの「自身の遅延」だけを同期。
-                timeScheduleData.forEach(slot => {
-                    const value = parseDelayMinutes(
-                        scheduleDelayMap?.[String(slot.day)]?.[String(slot.id)] ?? 0
-                    );
-                    slot.delay = String(value);
-                });
-
-                renderTimeSchedule();
-                loadSelectedEventDelay();
-            },
-            (error) => {
-                console.error('Schedule delay read error:', error);
-            }
-        );
-    }
-
-    function applyBroadcastData(data) {
-        if (!data) {
-            currentActiveServerDelay = null;
-            isInitialLoad = false;
-            refreshGlobalAlertBarDisplay();
-            return;
-        }
-
-        currentActiveServerDelay = data;
-
-        const delay = parseDelayMinutes(data.delay);
-        const targetSlot = timeScheduleData.find(slot =>
-            String(slot.id) === String(data.eventId) &&
-            Number(slot.day) === Number(data.day)
-        );
-
-        if (targetSlot) {
-            targetSlot.delay = String(delay);
-        }
-
-        localStorage.removeItem('alert_bar_hidden_by_user');
-        refreshGlobalAlertBarDisplay();
-
-        if (!isInitialLoad && delay > 0) {
-            const lastSeenPopupKey =
-                `popup_seen_${data.day}_${data.eventId}_${delay}_${data.timestamp}`;
-
-            if (!localStorage.getItem(lastSeenPopupKey)) {
-                const msg =
-                    `【進行変更】\n「${data.target}」に、現在【${delay}分】の遅れが発生しています！`;
-
-                const alertTextEl = document.getElementById('sync-alert-text');
-                if (alertTextEl) alertTextEl.innerText = msg;
-
-                openModal('modal-sync-alert');
-                localStorage.setItem(lastSeenPopupKey, 'true');
-            }
-        }
-
-        isInitialLoad = false;
-        renderTimeSchedule();
-    }
-
-    function initBroadcastListener() {
-        FIREBASE_BROADCAST_REF.on(
-            'value',
-            (snapshot) => {
-                applyBroadcastData(snapshot.val());
-            },
-            (error) => {
-                console.error('Broadcast read error:', error);
-                isInitialLoad = false;
-            }
-        );
-    }
-
-    // 互換用：既存コードから呼ばれても動作する
-    function syncCloudAndCheckAlert() {
-        FIREBASE_BROADCAST_REF.once('value')
-            .then(snapshot => applyBroadcastData(snapshot.val()))
-            .catch(error => {
-                console.error('Broadcast sync error:', error);
-                isInitialLoad = false;
-            });
-    }
-
-    function refreshGlobalAlertBarDisplay() {
-        const alertBar = document.getElementById('global-alert');
-        if (!alertBar) return;
-
-        const toggleEl = document.getElementById('map-delay-toggle');
-        const toggleEnabled = toggleEl ? toggleEl.checked : true;
-        const isUserHidden = localStorage.getItem('alert_bar_hidden_by_user') === 'true';
-        const delay = currentActiveServerDelay
-            ? parseDelayMinutes(currentActiveServerDelay.delay)
-            : 0;
-
-        if (currentActiveServerDelay && toggleEnabled && !isUserHidden && delay > 0) {
-            const alertMsgEl = document.getElementById('alert-message');
-            if (alertMsgEl) {
-                alertMsgEl.innerText =
-                    `⚠️ 「${currentActiveServerDelay.target}」に【${delay}分】の遅れが発生しています。`;
-            }
-            alertBar.style.display = 'flex';
-        } else {
-            alertBar.style.display = 'none';
-        }
-    }
-
-    function closeAlertBar() {
-        localStorage.setItem('alert_bar_hidden_by_user', 'true');
-        const alertBar = document.getElementById('global-alert');
-        if (alertBar) alertBar.style.display = 'none';
-    }
-
-    function toggleSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('menu-overlay');
-        if (sidebar) sidebar.classList.toggle('open');
-        if (overlay) overlay.classList.toggle('show');
-    }
-    function openModal(id) {
-        const modal = document.getElementById(id);
-        if (modal) modal.classList.add('show');
-    }
-    function closeModal(id) {
-        const modal = document.getElementById(id);
-        if (modal) modal.classList.remove('show');
-    }
-    function closeModalOnOverlay(e, id) {
-        if (e.target && e.target.classList.contains('modal')) {
-            closeModal(id);
+        } catch(e) {
+            console.error(e);
+            alert('配信に失敗しました。');
         }
     }
 </script>
-
 </body>
 </html>
