@@ -9,7 +9,8 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics-compat.js"></script>
+    
 <!-- Leaflet -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -1862,11 +1863,18 @@ const firebaseConfig = {
     storageBucket:"ouji-app.firebasestorage.app",
     messagingSenderId:"846375996980",
     appId:"1:846375996980:web:cae5c4eac85b7f85bd0461"
+    measurementId:"G-0T8RLD7F02"
 };
-
+    
 if(!firebase.apps.length){
     firebase.initializeApp(firebaseConfig);
 }
+    
+if(!firebase.apps.length){
+    firebase.initializeApp(firebaseConfig);
+}
+
+const analytics = firebase.analytics();
 
 const FIREBASE_BROADCAST_REF =
     firebase.database().ref("broadcast");
