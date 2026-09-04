@@ -18,6 +18,13 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
+.shop-menu-text {
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+    color: var(--text-main);
+    white-space: pre-line;
+    line-height: 1.5;
+}
 :root{
     --primary:#1e3a8a;
     --primary-light:#eff6ff;
@@ -4001,10 +4008,7 @@ function renderShops(){
                         📋 メニュー
                     </span>
 
-                    <div
-                        style="font-size:.8rem;margin-bottom:8px;color:var(--text-main);white-space:pre-wrap;">
-                        ${shop.menu}
-                    </div>
+                    <div class="shop-menu-text">${shop.menu}</div>
 
                     <button
                         class="map-go-btn"
