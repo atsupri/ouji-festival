@@ -344,7 +344,7 @@
     .admin-btn { border: none; padding: 10px; border-radius: 6px; font-weight: bold; color: white; cursor: pointer; }
     .admin-btn.delay { background: #eab308; }
 
-    /* 🛠️ 管理者パネル：日付選択＋カチカチ式遅延設定 */
+    /* 🛠️ 管理者パネル：日付選択＋ダイヤル式遅延設定 */
     .admin-day-selector {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -379,62 +379,49 @@
         border-radius: 12px;
         text-align: center;
     }
-    .delay-stepper-title {
-        font-size: 0.82rem;
-        font-weight: bold;
-        margin-bottom: 8px;
-    }
     .delay-stepper {
         width: 150px;
-        margin: 0 auto;
+        margin: 10px auto 8px;
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 6px;
+        touch-action: manipulation;
         user-select: none;
     }
     .stepper-arrow {
-        width: 92px;
-        height: 42px;
-        border: 1px solid #cbd5e1;
+        width: 88px;
+        height: 40px;
+        border: 1px solid var(--border);
         border-radius: 10px;
         background: white;
         color: var(--primary);
-        font-size: 1.25rem;
+        font-size: 1.15rem;
         font-weight: 900;
         line-height: 1;
         cursor: pointer;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.06);
-        touch-action: manipulation;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+        transition: transform 0.05s ease, background 0.15s ease;
     }
     .stepper-arrow:active {
-        transform: translateY(1px) scale(0.97);
-        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        transform: scale(0.95);
+        background: #eff6ff;
     }
     .delay-stepper-value {
-        min-width: 116px;
-        padding: 9px 14px;
+        min-width: 120px;
+        padding: 10px 16px;
         border: 2px solid var(--primary);
         border-radius: 12px;
         background: white;
         color: var(--primary);
-        font-size: 2rem;
+        font-size: 1.6rem;
         font-weight: 900;
-        line-height: 1.1;
-        box-shadow: inset 0 0 0 1px rgba(30,58,138,0.04);
-    }
-    .delay-number-input {
-        width: 100px !important;
-        margin: 4px auto 0 !important;
-        text-align: center;
-        font-size: 0.85rem !important;
-        font-weight: bold;
+        line-height: 1;
     }
     .delay-stepper-hint {
-        margin-top: 7px;
         font-size: 0.7rem;
         color: var(--text-sub);
-        line-height: 1.45;
+        line-height: 1.4;
     }
     .admin-current-delay {
         margin-top: 8px;
@@ -685,28 +672,15 @@
         <div id="admin-event-help" class="admin-event-help">選択した日程のイベントだけが表示されます。</div>
 
         <div class="delay-stepper-section">
-            <div class="delay-stepper-title">③ 遅延時間を設定</div>
+            <div style="font-size:0.82rem;font-weight:bold;">③ 遅延時間を上下で設定</div>
 
-            <div id="delay-stepper-wrap" class="delay-stepper" tabindex="0" aria-label="遅延時間の数値選択">
-                <button type="button" class="stepper-arrow" onclick="changeAdminDelay(1)" aria-label="1分増やす">▲</button>
-                <div id="delay-stepper-value" class="delay-stepper-value">0分</div>
-                <button type="button" class="stepper-arrow" onclick="changeAdminDelay(-1)" aria-label="1分減らす">▼</button>
+            <div id="delay-stepper" class="delay-stepper" tabindex="0" aria-label="遅延時間を上下で選択">
+                <button type="button" class="stepper-arrow" onclick="changeAdminDelay(1)" aria-label="遅延時間を1分増やす">▲</button>
+                <div id="delay-stepper-value" class="delay-stepper-value" aria-live="polite">0分</div>
+                <button type="button" class="stepper-arrow" onclick="changeAdminDelay(-1)" aria-label="遅延時間を1分減らす">▼</button>
             </div>
 
-            <input
-                type="number"
-                id="delay-number-input"
-                class="delay-number-input"
-                min="0"
-                max="60"
-                step="1"
-                value="0"
-                inputmode="numeric"
-                aria-label="遅延時間（分）を直接入力"
-                onchange="handleDelayNumberInput()"
-            >
-
-            <div class="delay-stepper-hint">▲▼で1分ずつカチカチ変更（0〜60分）<br>マウスホイール・キーボードの↑↓でも変更できます。<br>同じイベントを再設定した場合は、前の値に加算せず「この値」に置き換えます。</div>
+            <div class="delay-stepper-hint">▲▼で1分ずつカチカチ変更できます（0〜60分）。<br>マウスホイール・キーボードの↑↓でも変更できます。<br>同じイベントを再設定した場合は、前の値に加算せず「この値」に置き換えます。</div>
             <div id="admin-current-delay" class="admin-current-delay"></div>
         </div>
 
@@ -738,14 +712,8 @@
     if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
     }
-
-    // Google Analytics 4
-    try {
-        if (typeof firebase.analytics === 'function') {
-            firebase.analytics();
-        }
-    } catch (analyticsError) {
-        console.warn('Google Analyticsの初期化をスキップしました:', analyticsError);
+    if (typeof firebase.analytics === 'function') {
+        firebase.analytics();
     }
     const FIREBASE_DB_URL = "https://ouji-app-default-rtdb.firebaseio.com/broadcast.json";
     const FIREBASE_BROADCAST_REF = firebase.database().ref("broadcast");
@@ -1580,19 +1548,24 @@
         ) || null;
     }
 
-    /* =========================================================
-       数字上下カチカチUI（0〜60分）
-       ※Firebaseへの保存処理は既存のまま変更しません。
-    ========================================================= */
+    function setAdminDelayValue(minutes) {
+        const value = Math.max(0, Math.min(60, parseInt(minutes, 10) || 0));
+        currentAdminDelayMinutes = value;
+
+        const valueEl = document.getElementById('delay-stepper-value');
+        if (valueEl) valueEl.innerText = `${value}分`;
+
+        updateAdminCurrentDelayText();
+    }
+
+    function changeAdminDelay(amount) {
+        setAdminDelayValue(currentAdminDelayMinutes + Number(amount || 0));
+    }
+
     function updateAdminCurrentDelayText() {
         const currentEl = document.getElementById('admin-current-delay');
         const slot = getSelectedAdminSlot();
-        if (!currentEl) return;
-
-        if (!slot) {
-            currentEl.innerText = '';
-            return;
-        }
+        if (!currentEl || !slot) return;
 
         const saved = parseDelayMinutes(
             scheduleDelayMap?.[String(slot.day)]?.[String(slot.id)] ?? slot.delay ?? 0
@@ -1603,43 +1576,16 @@
             : '現在保存されている値：通常進行（0分）';
     }
 
-    function setAdminDelayValue(minutes) {
-        let value = parseInt(minutes, 10);
-        if (Number.isNaN(value)) value = 0;
-
-        value = Math.max(0, Math.min(60, value));
-        currentAdminDelayMinutes = value;
-
-        const valueEl = document.getElementById('delay-stepper-value');
-        const inputEl = document.getElementById('delay-number-input');
-
-        if (valueEl) valueEl.innerText = `${value}分`;
-        if (inputEl) inputEl.value = String(value);
-
-        updateAdminCurrentDelayText();
-    }
-
-    function changeAdminDelay(amount) {
-        setAdminDelayValue(currentAdminDelayMinutes + (Number(amount) || 0));
-    }
-
-    function handleDelayNumberInput() {
-        const inputEl = document.getElementById('delay-number-input');
-        if (!inputEl) return;
-        setAdminDelayValue(inputEl.value);
-    }
-
     function initAdminDelayStepper() {
-        const wrap = document.getElementById('delay-stepper-wrap');
-        if (!wrap || wrap.dataset.bound === 'true') return;
+        const stepper = document.getElementById('delay-stepper');
+        if (!stepper) return;
 
-        wrap.dataset.bound = 'true';
-        wrap.addEventListener('wheel', (event) => {
+        stepper.addEventListener('wheel', (event) => {
             event.preventDefault();
-            changeAdminDelay(event.deltaY < 0 ? 1 : -1);
+            changeAdminDelay(event.deltaY > 0 ? -1 : 1);
         }, { passive: false });
 
-        wrap.addEventListener('keydown', (event) => {
+        stepper.addEventListener('keydown', (event) => {
             if (event.key === 'ArrowUp' || event.key === 'ArrowRight') {
                 event.preventDefault();
                 changeAdminDelay(1);
@@ -1654,8 +1600,6 @@
                 setAdminDelayValue(60);
             }
         });
-
-        setAdminDelayValue(currentAdminDelayMinutes);
     }
 
     function loadSelectedEventDelay() {
