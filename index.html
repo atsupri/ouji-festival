@@ -969,9 +969,9 @@ const shopData = [
 		{ id: 12, day: 2, time: "13:00 - 14:00", name: "さつきホール：演劇部", delay: "0" }
     ];
     const noticeData = [
-        { title: "アクセスについて", sub: "公共交通機関をご利用ください。来場者用の駐車場はございません。" },
-		{ title: "校内でのルール", sub: "校舎内は土足禁止です。上履きまたは受付で配布している靴カバーをご利用ください。\nゴミは指定のゴミ箱へ。禁煙禁酒です。" },
-		{ title: "アクセスについて", sub: "" }
+		{ title: "🏫校内でのルール", sub: "校舎内は土足禁止です。上履きまたは受付で配布している靴カバーをご利用ください。\nゴミは指定のゴミ箱へ。禁煙禁酒です。" },
+		{ title: "落とし物は受付へ", sub: "落とし物・お忘れ物等のお問い合わせは受付で承ります。" }
+		{ title: "🎫お支払い方法（決済ルール）", sub: "PayPayまたは指定の金券のみ使用できます" },
     ];
     // ==========================================
     // ⚙️ 【システムロジックエリア】
@@ -1029,8 +1029,13 @@ const shopData = [
 
         const noticeContainer = document.getElementById('notice-list-container');
         if (noticeContainer) {
-            noticeContainer.innerHTML = noticeData.map(d => `<li class="greeting-card"><b>${d.title}</b><span style="display:block;color:var(--text-sub);font-size:0.8rem;margin-top:4px;">${d.sub}</span></li>`).join('');
-        }
+			noticeContainer.innerHTML = noticeData.map(d => `
+    <li class="greeting-card">
+        <b>${d.title}</b>
+        <span style="display:block;color:var(--text-sub);font-size:0.8rem;margin-top:4px;white-space:pre-line;">${d.sub}</span>
+    </li>
+`).join('');
+                   }
         
         // Firebase Realtime Databaseの変更をリアルタイム監視
         initBroadcastListener();
