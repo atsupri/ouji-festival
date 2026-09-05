@@ -1041,6 +1041,9 @@
         initAdminSelect(currentAdminDay);
         updateNotificationStatusUI();
         startFavoriteNotificationChecker();
+
+        // GA4: アプリ起動を記録（個人を特定できる情報は送信しません）
+        logGA4Event('app_start', { initial_page: 'map' });
     };
 
     function handleTitleTap() {
@@ -1716,18 +1719,14 @@
         return `${minutesToTime(startMin + delayMinutes)} - ${minutesToTime(endMin + delayMinutes)}`;
     }
 
+    // ⏰ 遅延は「設定したイベント自身」だけに反映します。
+    // 後ろのイベントには遅延を累積させません。
     function calculateCumulativeDelay(day, targetId) {
-        const dayEvents = timeScheduleData
-            .filter(item => Number(item.day) === Number(day))
-            .sort((a, b) => Number(a.id) - Number(b.id));
-
-        let cumulative = 0;
-        for (const ev of dayEvents) {
-            const selfDelay = parseDelayMinutes(scheduleDelayMap[ev.id]);
-            cumulative += selfDelay;
-            if (Number(ev.id) === Number(targetId)) break;
-        }
-        return cumulative;
+        const targetEvent = timeScheduleData.find(item =>
+            Number(item.day) === Number(day) && Number(item.id) === Number(targetId)
+        );
+        if (!targetEvent) return 0;
+        return parseDelayMinutes(scheduleDelayMap[targetEvent.id]);
     }
 
     function renderTimeSchedule() {
