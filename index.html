@@ -5,6 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>厚木王子 文化祭アプリ</title>
 
+<!-- Google Analytics 4 (GA4) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5JGK6DNQB2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  // GA4設定 (プライバシー配慮: Signal/広告パーソナライズOFF)
+  gtag('config', 'G-5JGK6DNQB2', {
+    'allow_google_signals': false,
+    'allow_ad_personalization_signals': false,
+    'anonymize_ip': true
+  });
+</script>
+
 <!-- Firebase SDK（メール/パスワード認証とRealtime Database用） -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -609,7 +624,7 @@
     </div>
     
     <nav class="sidebar-nav">
-        <button onclick="openModal('modal-all-shops')" style="background: var(--primary-light); color: var(--primary); font-weight: bold; margin-bottom: 10px;">
+        <button onclick="openModal('modal-all-shops'); logGA4Event('view_all_shops_modal');" style="background: var(--primary-light); color: var(--primary); font-weight: bold; margin-bottom: 10px;">
             <i class="fa-solid fa-list-ul"></i> すべての店舗一覧を見る
         </button>
         <div class="sidebar-divider">メニュー</div>
@@ -617,7 +632,7 @@
         <button onclick="openModal('modal-rules')"><i class="fa-solid fa-circle-exclamation"></i> お知らせとお願い</button>
         <button onclick="openModal('modal-push')"><i class="fa-solid fa-bell"></i> スマホ通知設定</button>
         
-        <button onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSc-P42PTdaXDeCKBQt3gsu302z9rG9pF2GA4Pe_Lw6BBSyGAA/viewform?usp=header', '_blank')" style="color: #047857;">
+        <button onclick="logGA4Event('click_survey'); window.open('https://docs.google.com/forms/d/e/1FAIpQLSc-P42PTdaXDeCKBQt3gsu302z9rG9pF2GA4Pe_Lw6BBSyGAA/viewform?usp=header', '_blank')" style="color: #047857;">
             <i class="fa-solid fa-envelope"></i> アンケートのご協力おねがいします！
         </button>
     </nav>
@@ -656,7 +671,7 @@
                     <div class="schedule-notice-hint-text">お気に入りの予定や、遅延・後ろ倒しをお知らせします。</div>
                     <button type="button" onclick="openNotificationSettingsFromSchedule()">設定する</button>
                 </div>
-                <div class="schedule-notice-note">通知の設定は左上の「☰」→「スマホ通知設定」からも変更できます。</div>
+                <div class="schedule-notice-note">通知の設定は左上の「☰」➡️「スマホ通知設定」からも変更できます。</div>
             </div>
             <div id="timeline-container" class="timeline-wrapper" style="padding:0 16px;"></div>
         </div>
@@ -745,7 +760,7 @@
             <div class="greeting-title">👨‍🏫 校長先生からのご挨拶</div>
             <div class="greeting-text">今回の王華祭のテーマは、「3rd Re:START〜新たな歴史を刻め〜」です。この言葉には、皆さんの「これまでの歩みを振り返り、気持ちを新たに王子高校の未来を創っていきたい」という願いが込められているように思います。統合から3年が経過し、本校ならではの個性も少しづつ形づくられてきました。今回の王華祭が、これまでの取組を振り返るとともに、新たな一歩を踏み出し、みんなで新しい王子高校の歴史を創り上げる特別な機会となることを願っています。
 一人一人が主役となり、王華祭を大いに盛り上げていきましょう。
-学校長　宗方泰司</div>
+学校長 宗方泰司</div>
         </div>
     </div>
 </div>
@@ -844,6 +859,13 @@
 </footer>
 
 <script>
+    // GA4 イベント安全送信ヘパー
+    function logGA4Event(eventName, params = {}) {
+        if (typeof gtag === 'function') {
+            gtag('event', eventName, params);
+        }
+    }
+
     // ==========================================
     // 🎨 【データ・通信設定エリア】
     // ==========================================
@@ -855,7 +877,7 @@
         storageBucket: "ouji-app.firebasestorage.app",
         messagingSenderId: "846375996980",
         appId: "1:846375996980:web:cae5c4eac85b7f85bd0461",
-	measurementId: "G-0T8RLD7F02"
+        measurementId: "G-5JGK6DNQB2"
     };
     if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
@@ -869,114 +891,88 @@
         '3F': 'map3f.png',
         '4F': 'map4f.png'
     };
-        // --- 1年生 クラス企画 ---
-const shopData = [
 
-    // =========================================================
-    // 1年生
-    // =========================================================
+    const shopData = [
+        { id: 1, floor: '3F', location: 'A棟', title: '1-1：ハニーハント', genre: '体験・アトラクション', x: 404, y: 487, menu: 'ハニーハント', image: '1-1.png' },
+        { id: 2, floor: '3F', location: 'A棟', title: '1-2：ホラーメイドカフェ', genre: '食品販売', x: 455, y: 487, menu: 'ホラーメイドカフェ', image: '1-2.png' },
+        { id: 3, floor: '3F', location: 'A棟', title: '1-3：おえかきせんべい', genre: '食品販売', x: 505, y: 487, menu: 'おえかきせんべい', image: '1-3.png' },
+        { id: 4, floor: '4F', location: 'A棟', title: '1-4：競人', genre: '体験・アトラクション', x: 404, y: 487, menu: '競人', image: '1-4.png' },
+        { id: 5, floor: '4F', location: 'A棟', title: '1-5：プラネタリウムカフェ', genre: '食品販売', x: 455, y: 487, menu: 'プラネタリウムカフェ', image: '1-5.png' },
+        { id: 6, floor: '3F', location: 'C棟', title: '1-6：ホームテッドアパート', genre: '体験・アトラクション', x: 533, y: 322, menu: 'ホームテッドアパート', image: '1-6.png' },
+        { id: 7, floor: '3F', location: '商棟', title: '1-7：VS7組', genre: '体験・アトラクション', x: 67, y: 413, menu: 'VS7組', image: '1-7.png' },
+        { id: 8, floor: '3F', location: '商棟', title: '1-8：脱出ゲーム', genre: '体験・アトラクション', x: 67, y: 363, menu: '脱出ゲーム', image: '1-8.png' },
+        { id: 9, floor: '3F', location: 'B棟', title: '1-9：迷路', genre: '体験・アトラクション', x: 733, y: 405, menu: '迷路', image: '1-9.png' },
+        { id: 10, floor: '3F', location: '商棟', title: '2-1：タピオカ', genre: '食品販売', x: 67, y: 461, menu: 'タピオカ', image: '2-1.png' },
+        { id: 11, floor: '3F', location: 'C棟', title: '2-2：チャンバラ', genre: '体験・アトラクション', x: 486, y: 322, menu: 'チャンバラ', image: '2-2.png' },
+        { id: 12, floor: '3F', location: 'C棟', title: '2-3：お化け屋敷', genre: '体験・アトラクション', x: 649, y: 322, menu: 'お化け屋敷', image: '2-3.png' },
+        { id: 13, floor: '3F', location: 'C棟', title: '2-4：シューアイス', genre: '食品販売', x: 386, y: 322, menu: 'シューアイス', image: '2-4.png' },
+        { id: 14, floor: '3F', location: 'C棟', title: '2-5：VRコースター', genre: '体験・アトラクション', x: 266, y: 322, menu: 'VRコースター', image: '2-5.png' },
+        { id: 15, floor: '2F', location: 'A棟', title: '2-6：トランプ・ルーレット', genre: '体験・アトラクション', x: 353, y: 487, menu: 'トランプ・ルーレット', image: '2-6.png' },
+        { id: 16, floor: '2F', location: 'A棟', title: '2-7：ボウリング', genre: '体験・アトラクション', x: 404, y: 487, menu: 'ボウリング', image: '2-7.png' },
+        { id: 17, floor: '2F', location: 'A棟', title: '2-8：カフェ', genre: '食品販売', x: 455, y: 487, menu: 'カフェ', image: '2-8.png' },
+        { id: 18, floor: '2F', location: 'A棟', title: '2-9：縁日', genre: '体験・アトラクション', x: 505, y: 487, menu: '縁日', image: '2-9.png' },
+        { id: 19, floor: '1F', location: 'A棟', title: '3-1：トッポギ', genre: '食品販売', x: 353, y: 487, menu: 'トッポギ', image: '3-1.png' },
+        { id: 20, floor: '1F', location: '外', title: '3-2：焼き鳥', genre: '食品販売', x: 288, y: 605, menu: '焼き鳥', image: '3-2.png' },
+        { id: 21, floor: '3F', location: '外', title: '3-3：フルーツポンチ（サイダー）', genre: '食品販売', x: 67, y: 265, menu: 'フルーツポンチ（サイダー）', image: '3-3.png' },
+        { id: 22, floor: '1F', location: 'A棟', title: '3-4：小籠包', genre: '食品販売', x: 404, y: 487, menu: '小籠包', image: '3-4.png' },
+        { id: 23, floor: '1F', location: '外', title: '3-5：油そば', genre: '食品販売', x: 393, y: 605, menu: '油そば', image: '3-5.png' },
+        { id: 24, floor: '1F', location: '外', title: '3-6：フランクフルト', genre: '食品販売', x: 263, y: 530, menu: 'フランクフルト', image: '3-6.png' },
+        { id: 25, floor: '1F', location: '外', title: '3-7：焼きそば', genre: '食品販売', x: 263, y: 492, menu: '焼きそば', image: '3-7.png' },
+        { id: 26, floor: '1F', location: '外', title: '3-8：ベビーカステラ', genre: '食品販売', x: 393, y: 585, menu: 'ベビーカステラ', image: '3-8.png' },
+        { id: 27, floor: '1F', location: 'A棟', title: '3-9：かき氷', genre: '食品販売', x: 455, y: 487, menu: 'かき氷', image: '3-9.png' },
+        { id: 28, floor: '4F', location: 'A棟', title: 'アニメ漫画研究部：作品販売', genre: '展示・発表', x: 353, y: 487, menu: '作品販売', image: 'アニメ漫画研究部.png' },
+        { id: 29, floor: '1F', location: 'ホール', title: '演劇部：発表', genre: '展示・発表', x: 81, y: 591, menu: '発表', image: '演劇部.png' },
+        { id: 30, floor: '3F', location: 'C棟', title: '華道部：展示（兼休憩スペース）', genre: '展示・発表', x: 332, y: 322, menu: '展示（兼休憩スペース）', image: '華道部.png' },
+        { id: 31, floor: '4F', location: 'A棟', title: '軽音楽部：ライブ', genre: '展示・発表', x: 263, y: 500, menu: 'ライブ', image: '軽音楽部.png' },
+        { id: 32, floor: '3F', location: '商棟', title: '茶道部：お茶', genre: '体験・アトラクション', x: 123, y: 251, menu: 'お茶', image: '茶道部.png' },
+        { id: 33, floor: '3F', location: '商棟', title: '自然科学部：プラネタリウム', genre: '展示・発表', x: 67, y: 309, menu: 'プラネタリウム', image: '自然科学部.png' },
+        { id: 34, floor: '3F', location: 'A棟', title: '写真部：展示（兼休憩スペース）', genre: '展示・発表', x: 353, y: 487, menu: '展示（兼休憩スペース）', image: '写真部.png' },
+        { id: 35, floor: '1F', location: '体育館', title: '吹奏楽部：発表', genre: '展示・発表', x: 797, y: 315, menu: '発表', image: '吹奏楽部.png' },
+        { id: 36, floor: '1F', location: 'ホール', title: '筝曲部：演奏', genre: '展示・発表', x: 110, y: 591, menu: '演奏', image: '筝曲部.png' },
+        { id: 37, floor: '1F', location: '体育館', title: 'ダンス部：発表', genre: '展示・発表', x: 824, y: 315, menu: '発表', image: 'ダンス部.png' },
+        { id: 38, floor: '1F', location: '旧食堂', title: '人形浄瑠璃部：公演', genre: '展示・発表', x: 883, y: 507, menu: '公演', image: '人形浄瑠璃部.png' },
+        { id: 39, floor: '1F', location: '体育館', title: 'バトントワリング部：発表', genre: '展示・発表', x: 851, y: 315, menu: '発表', image: 'バトントワリング部.png' },
+        { id: 40, floor: '4F', location: 'A棟', title: '美術部：展示', genre: '展示・発表', x: 505, y: 487, menu: '展示', image: '美術部.png' },
+        { id: 41, floor: '1F', location: 'A棟', title: '料理部：パイなど', genre: '食品販売', x: 505, y: 487, menu: 'パイなど', image: '料理部.png' },
+        { id: 42, floor: '1F', location: '商棟', title: '電算部：自作ゲームの展示', genre: '展示・発表', x: 67, y: 265, menu: '自作ゲームの展示', image: '電算部.png' },
+        { id: 43, floor: '2F', location: 'C棟', title: '珠算電卓部：展示・フラッシュ暗算・ストラックアウト', genre: '体験・アトラクション', x: 438, y: 322, menu: '展示、フラッシュ暗算、ストラックアウト', image: '珠算電卓部.png' },
+        { id: 44, floor: '3F', location: '商棟', title: 'ワープロ部：ワープロ競技大会', genre: '体験・アトラクション', x: 174, y: 269, menu: 'ワープロ競技大会', image: 'ワープロ部.png' },
+        { id: 45, floor: '3F', location: 'C棟', title: 'ボランティア部：展示（兼食事スペース）', genre: '展示・発表', x: 437, y: 322, menu: '展示（兼食事スペース）', image: 'ボランティア部.png' },
+        { id: 46, floor: '1F', location: '商棟', title: 'マーケティング部：レジン・シーグラス作成体験', genre: '体験・アトラクション', x: 67, y: 330, menu: 'レジン、シーグラス作成体験', image: 'マーケティング部.png' },
+        { id: 47, floor: '1F', location: '弓道場', title: '弓道部：体験', genre: '体験・アトラクション', x: 997, y: 483, menu: '体験', image: '弓道部.png' },
+        { id: 48, floor: '1F', location: 'グラウンド', title: '男子サッカー部：体験', genre: '体験・アトラクション', x: 429, y: 228, menu: '体験', image: '男子サッカー部.png' },
+        { id: 49, floor: '1F', location: 'グラウンド', title: 'ソフトボール部：体験', genre: '体験・アトラクション', x: 468, y: 215, menu: '体験 ※9月5日(土)のみ', image: 'ソフトボール部.png' },
+        { id: 50, floor: '1F', location: '商棟', title: '商業科：販売・展示', genre: '展示・発表', x: 174, y: 369, menu: '販売、展示', image: '' },
+        { id: 51, floor: '1F', location: '商棟', title: '商活研：販売・展示', genre: '展示・発表', x: 67, y: 417, menu: '販売、展示', image: '' },
+        { id: 52, floor: '2F', location: '図書館', title: '図書委員会：図書館紹介など', genre: '展示・発表', x: 177, y: 268, menu: '図書館紹介など', image: '' },
+        { id: 53, floor: '1F', location: '体育館', title: '文化祭実行委員会：ステージ盛り上げグッズ等', genre: '展示・発表', x: 878, y: 315, menu: 'ステージ盛り上げグッズ等', image: '' },
+        { id: 54, floor: '2F', location: '商棟', title: '生徒会：うちわ作り、紙コップ制作', genre: '体験・アトラクション', x: 67, y: 461, menu: 'うちわ作り、紙コップ制作', image: '' },
+        { id: 55, floor: '1F', location: 'C棟', title: 'PTA：物販', genre: '食品販売', x: 438, y: 322, menu: '物販', image: '' },
+        { id: 56, floor: '1F', location: 'C棟', title: '同窓会：くじ', genre: '体験・アトラクション', x: 496, y: 322, menu: 'くじ', image: '' },
+        { id: 57, floor: '1F', location: '正門', title: '生徒有志：アーチ', genre: '展示・発表', x: 53, y: 198, menu: 'アーチ', image: '' }
+    ];
 
-    { id: 1, floor: '3F', location: 'A棟', title: '1-1：ハニーハント', genre: '体験・アトラクション', x: 404, y: 487, menu: 'ハニーハント', image: '1-1.png' },
-    { id: 2, floor: '3F', location: 'A棟', title: '1-2：ホラーメイドカフェ', genre: '食品販売', x: 455, y: 487, menu: 'ホラーメイドカフェ', image: '1-2.png' },
-    { id: 3, floor: '3F', location: 'A棟', title: '1-3：おえかきせんべい', genre: '食品販売', x: 505, y: 487, menu: 'おえかきせんべい', image: '1-3.png' },
-    { id: 4, floor: '4F', location: 'A棟', title: '1-4：競人', genre: '体験・アトラクション', x: 404, y: 487, menu: '競人', image: '1-4.png' },
-    { id: 5, floor: '4F', location: 'A棟', title: '1-5：プラネタリウムカフェ', genre: '食品販売', x: 455, y: 487, menu: 'プラネタリウムカフェ', image: '1-5.png' },
-    { id: 6, floor: '3F', location: 'C棟', title: '1-6：ホームテッドアパート', genre: '体験・アトラクション', x: 533, y: 322, menu: 'ホームテッドアパート', image: '1-6.png' },
-    { id: 7, floor: '3F', location: '商棟', title: '1-7：VS7組', genre: '体験・アトラクション', x: 67, y: 413, menu: 'VS7組', image: '1-7.png' },
-    { id: 8, floor: '3F', location: '商棟', title: '1-8：脱出ゲーム', genre: '体験・アトラクション', x: 67, y: 363, menu: '脱出ゲーム', image: '1-8.png' },
-    { id: 9, floor: '3F', location: 'B棟', title: '1-9：迷路', genre: '体験・アトラクション', x: 733, y: 405, menu: '迷路', image: '1-9.png' },
-
-    // =========================================================
-    // 2年生
-    // =========================================================
-
-    { id: 10, floor: '3F', location: '商棟', title: '2-1：タピオカ', genre: '食品販売', x: 67, y: 461, menu: 'タピオカ', image: '2-1.png' },
-    { id: 11, floor: '3F', location: 'C棟', title: '2-2：チャンバラ', genre: '体験・アトラクション', x: 486, y: 322, menu: 'チャンバラ', image: '2-2.png' },
-    { id: 12, floor: '3F', location: 'C棟', title: '2-3：お化け屋敷', genre: '体験・アトラクション', x: 649, y: 322, menu: 'お化け屋敷', image: '2-3.png' },
-    { id: 13, floor: '3F', location: 'C棟', title: '2-4：シューアイス', genre: '食品販売', x: 386, y: 322, menu: 'シューアイス', image: '2-4.png' },
-    { id: 14, floor: '3F', location: 'C棟', title: '2-5：VRコースター', genre: '体験・アトラクション', x: 266, y: 322, menu: 'VRコースター', image: '2-5.png' },
-    { id: 15, floor: '2F', location: 'A棟', title: '2-6：トランプ・ルーレット', genre: '体験・アトラクション', x: 353, y: 487, menu: 'トランプ・ルーレット', image: '2-6.png' },
-    { id: 16, floor: '2F', location: 'A棟', title: '2-7：ボウリング', genre: '体験・アトラクション', x: 404, y: 487, menu: 'ボウリング', image: '2-7.png' },
-    { id: 17, floor: '2F', location: 'A棟', title: '2-8：カフェ', genre: '食品販売', x: 455, y: 487, menu: 'カフェ', image: '2-8.png' },
-    { id: 18, floor: '2F', location: 'A棟', title: '2-9：縁日', genre: '体験・アトラクション', x: 505, y: 487, menu: '縁日', image: '2-9.png' },
-
-    // =========================================================
-    // 3年生
-    // =========================================================
-
-    { id: 19, floor: '1F', location: 'A棟', title: '3-1：トッポギ', genre: '食品販売', x: 353, y: 487, menu: 'トッポギ', image: '3-1.png' },
-    { id: 20, floor: '1F', location: '外', title: '3-2：焼き鳥', genre: '食品販売', x: 288, y: 605, menu: '焼き鳥', image: '3-2.png' },
-    { id: 21, floor: '3F', location: '外', title: '3-3：フルーツポンチ（サイダー）', genre: '食品販売', x: 67, y: 265, menu: 'フルーツポンチ（サイダー）', image: '3-3.png' },
-    { id: 22, floor: '1F', location: 'A棟', title: '3-4：小籠包', genre: '食品販売', x: 404, y: 487, menu: '小籠包', image: '3-4.png' },
-    { id: 23, floor: '1F', location: '外', title: '3-5：油そば', genre: '食品販売', x: 393, y: 605, menu: '油そば', image: '3-5.png' },
-    { id: 24, floor: '1F', location: '外', title: '3-6：フランクフルト', genre: '食品販売', x: 263, y: 530, menu: 'フランクフルト', image: '3-6.png' },
-    { id: 25, floor: '1F', location: '外', title: '3-7：焼きそば', genre: '食品販売', x: 263, y: 492, menu: '焼きそば', image: '3-7.png' },
-    { id: 26, floor: '1F', location: '外', title: '3-8：ベビーカステラ', genre: '食品販売', x: 393, y: 585, menu: 'ベビーカステラ', image: '3-8.png' },
-    { id: 27, floor: '1F', location: 'A棟', title: '3-9：かき氷', genre: '食品販売', x: 455, y: 487, menu: 'かき氷', image: '3-9.png' },
-
-    // =========================================================
-    // 部活動・同好会
-    // =========================================================
-
-    { id: 28, floor: '4F', location: 'A棟', title: 'アニメ漫画研究部：作品販売', genre: '展示・発表', x: 353, y: 487, menu: '作品販売', image: 'アニメ漫画研究部.png' },
-    { id: 29, floor: '1F', location: 'ホール', title: '演劇部：発表', genre: '展示・発表', x: 81, y: 591, menu: '発表', image: '演劇部.png' },
-    { id: 30, floor: '3F', location: 'C棟', title: '華道部：展示（兼休憩スペース）', genre: '展示・発表', x: 332, y: 322, menu: '展示（兼休憩スペース）', image: '華道部.png' },
-    { id: 31, floor: '4F', location: 'A棟', title: '軽音楽部：ライブ', genre: '展示・発表', x: 263, y: 500, menu: 'ライブ', image: '軽音楽部.png' },
-    { id: 32, floor: '3F', location: '商棟', title: '茶道部：お茶', genre: '体験・アトラクション', x: 123, y: 251, menu: 'お茶', image: '茶道部.png' },
-    { id: 33, floor: '3F', location: '商棟', title: '自然科学部：プラネタリウム', genre: '展示・発表', x: 67, y: 309, menu: 'プラネタリウム', image: '自然科学部.png' },
-    { id: 34, floor: '3F', location: 'A棟', title: '写真部：展示（兼休憩スペース）', genre: '展示・発表', x: 353, y: 487, menu: '展示（兼休憩スペース）', image: '写真部.png' },
-    { id: 35, floor: '1F', location: '体育館', title: '吹奏楽部：発表', genre: '展示・発表', x: 797, y: 315, menu: '発表', image: '吹奏楽部.png' },
-    { id: 36, floor: '1F', location: 'ホール', title: '筝曲部：演奏', genre: '展示・発表', x: 110, y: 591, menu: '演奏', image: '筝曲部.png' },
-    { id: 37, floor: '1F', location: '体育館', title: 'ダンス部：発表', genre: '展示・発表', x: 824, y: 315, menu: '発表', image: 'ダンス部.png' },
-    { id: 38, floor: '1F', location: '旧食堂', title: '人形浄瑠璃部：公演', genre: '展示・発表', x: 883, y: 507, menu: '公演', image: '人形浄瑠璃部.png' },
-    { id: 39, floor: '1F', location: '体育館', title: 'バトントワリング部：発表', genre: '展示・発表', x: 851, y: 315, menu: '発表', image: 'バトントワリング部.png' },
-    { id: 40, floor: '4F', location: 'A棟', title: '美術部：展示', genre: '展示・発表', x: 505, y: 487, menu: '展示', image: '美術部.png' },
-    { id: 41, floor: '1F', location: 'A棟', title: '料理部：パイなど', genre: '食品販売', x: 505, y: 487, menu: 'パイなど', image: '料理部.png' },
-    { id: 42, floor: '1F', location: '商棟', title: '電算部：自作ゲームの展示', genre: '展示・発表', x: 67, y: 265, menu: '自作ゲームの展示', image: '電算部.png' },
-   
-    { id: 43, floor: '2F', location: 'C棟', title: '珠算電卓部：展示・フラッシュ暗算・ストラックアウト', genre: '体験・アトラクション', x: 438, y: 322, menu: '展示、フラッシュ暗算、ストラックアウト', image: '珠算電卓部.png' },
-    { id: 44, floor: '3F', location: '商棟', title: 'ワープロ部：ワープロ競技大会', genre: '体験・アトラクション', x: 174, y: 269, menu: 'ワープロ競技大会', image: 'ワープロ部.png' },
-    { id: 45, floor: '3F', location: 'C棟', title: 'ボランティア部：展示（兼食事スペース）', genre: '展示・発表', x: 437, y: 322, menu: '展示（兼食事スペース）', image: 'ボランティア部.png' },
-    { id: 46, floor: '1F', location: '商棟', title: 'マーケティング部：レジン・シーグラス作成体験', genre: '体験・アトラクション', x: 67, y: 330, menu: 'レジン、シーグラス作成体験', image: 'マーケティング部.png' },
-    { id: 47, floor: '1F', location: '弓道場', title: '弓道部：体験', genre: '体験・アトラクション', x: 997, y: 483, menu: '体験', image: '弓道部.png' },
-    { id: 48, floor: '1F', location: 'グラウンド', title: '男子サッカー部：体験', genre: '体験・アトラクション', x: 429, y: 228, menu: '体験', image: '男子サッカー部.png' },
-    { id: 49, floor: '1F', location: 'グラウンド', title: 'ソフトボール部：体験', genre: '体験・アトラクション', x: 468, y: 215, menu: '体験 ※9月5日(土)のみ', image: 'ソフトボール部.png' },
-
-    // =========================================================
-    // その他
-    // =========================================================
-
-    { id: 50, floor: '1F', location: '商棟', title: '商業科：販売・展示', genre: '展示・発表', x: 174, y: 369, menu: '販売、展示', image: '' },
-    { id: 51, floor: '1F', location: '商棟', title: '商活研：販売・展示', genre: '展示・発表', x: 67, y: 417, menu: '販売、展示', image: '' },
-    { id: 52, floor: '2F', location: '図書館', title: '図書委員会：図書館紹介など', genre: '展示・発表', x: 177, y: 268, menu: '図書館紹介など', image: '' },
-    { id: 53, floor: '1F', location: '体育館', title: '文化祭実行委員会：ステージ盛り上げグッズ等', genre: '展示・発表', x: 878, y: 315, menu: 'ステージ盛り上げグッズ等', image: '' },
-    { id: 54, floor: '2F', location: '商棟', title: '生徒会：うちわ作り、紙コップ制作', genre: '体験・アトラクション', x: 67, y: 461, menu: 'うちわ作り、紙コップ制作', image: '' },
-    { id: 55, floor: '1F', location: 'C棟', title: 'PTA：物販', genre: '食品販売', x: 438, y: 322, menu: '物販', image: '' },
-    { id: 56, floor: '1F', location: 'C棟', title: '同窓会：くじ', genre: '体験・アトラクション', x: 496, y: 322, menu: 'くじ', image: '' },
-    { id: 57, floor: '1F', location: '正門', title: '生徒有志：アーチ', genre: '展示・発表', x: 53, y: 198, menu: 'アーチ', image: '' }
-
-];
-    
     let timeScheduleData = [
         { id: 1, day: 1, time: "10:30 - 10:40", name: "体育館：バトントワリング部", delay: "0" },
         { id: 2, day: 1, time: "11:00 - 11:40", name: "体育館：ダンス部", delay: "0" },
         { id: 3, day: 1, time: "11:50 - 12:50", name: "さつきホール：演劇部", delay: "0" },
-		{ id: 4, day: 1, time: "13:00 - 13:30", name: "体育館：吹奏楽部", delay: "0" },
-		{ id: 5, day: 1, time: "13:40 - 13:50", name: "さつきホール：坪井（弾き語り）", delay: "0" },
-		{ id: 6, day: 1, time: "14:20 - 14:30", name: "体育館：キメラブ", delay: "0" },
-		{ id: 7, day: 1, time: "14:40 - 14:50", name: "体育館：MiRHKiS!", delay: "0" },
-		{ id: 8, day: 2, time: "9:30 - 14:30", name: "体育館：軽音楽部", delay: "0" },
-		{ id: 9, day: 2, time: "13:40 - 13:50", name: "体育館：生徒会", delay: "0" },
-		{ id: 10, day: 2, time: "10:00 - 10:30", name: "さつきホール：箏曲部", delay: "0" },
-		{ id: 11, day: 2, time: "10:45 - 11:00", name: "さつきホール：RUNE", delay: "0" },
-		{ id: 12, day: 2, time: "13:00 - 14:00", name: "さつきホール：演劇部", delay: "0" }
+        { id: 4, day: 1, time: "13:00 - 13:30", name: "体育館：吹奏楽部", delay: "0" },
+        { id: 5, day: 1, time: "13:40 - 13:50", name: "さつきホール：坪井（弾き語り）", delay: "0" },
+        { id: 6, day: 1, time: "14:20 - 14:30", name: "体育館：キメラブ", delay: "0" },
+        { id: 7, day: 1, time: "14:40 - 14:50", name: "体育館：MiRHKiS!", delay: "0" },
+        { id: 8, day: 2, time: "9:30 - 14:30", name: "体育館：軽音楽部", delay: "0" },
+        { id: 9, day: 2, time: "13:40 - 13:50", name: "体育館：生徒会", delay: "0" },
+        { id: 10, day: 2, time: "10:00 - 10:30", name: "さつきホール：箏曲部", delay: "0" },
+        { id: 11, day: 2, time: "10:45 - 11:00", name: "さつきホール：RUNE", delay: "0" },
+        { id: 12, day: 2, time: "13:00 - 14:00", name: "さつきホール：演劇部", delay: "0" }
     ];
     const noticeData = [
-		{ title: "🏫校内でのルール", sub: "校舎内は土足禁止です。上履きまたは受付で配布している靴カバーをご利用ください。\nゴミは指定のゴミ箱へ。禁煙禁酒です。" },
-		{ title: "落とし物は受付へ", sub: "落とし物・お忘れ物等のお問い合わせは受付で承ります。" },
-		{ title: "🎫お支払い方法（決済ルール）", sub: "PayPayまたは指定の金券のみ使用できます。\n金券の購入は金券販売所へお越しください。\n※PTA物販・食堂でのお支払いは現金のみ\n金券は切り取らず、そのまま各団体の受付へお渡しください。換金は、所定の時間までに生徒昇降口の金券販売所へお越しください。" },
-		{ title: "", sub: "📊 このアプリでは、よりよいサービスのためにGoogleアナリティクスを利用し、アプリの利用状況を匿名で集計・分析しています。個人を特定する目的では利用しません。\nアナリティクスによるデータの収集・利用については、Googleのプライバシーポリシーをご確認ください。" },
+        { title: "🏫校内でのルール", sub: "校舎内は土足禁止です。上履きまたは受付で配布している靴カバーをご利用ください。\nゴミは指定のゴミ箱へ。禁煙禁酒です。" },
+        { title: "落とし物は受付へ", sub: "落とし物・お忘れ物等のお問い合わせは受付で承ります。" },
+        { title: "🎫お支払い方法（決済ルール）", sub: "PayPayまたは指定の金券のみ使用できます。\n金券の購入は金券販売所へお越しください。\n※PTA物販・食堂でのお支払いは現金のみ\n金券は切り取らず、そのまま各団体の受付へお渡しください。換金は、所定の時間までに生徒昇降口の金券販売所へお越しください。" },
+        { title: "", sub: "📊 このアプリでは、よりよいサービスのためにGoogleアナリティクスを利用し、アプリの利用状況を匿名で集計・分析しています。個人を特定する目的では利用しません。\nアナリティクスによるデータの収集・利用については、Googleのプライバシーポリシーをご確認ください。" },
     ];
+
     // ==========================================
     // ⚙️ 【システムロジックエリア】
     // ==========================================
@@ -990,13 +986,11 @@ const shopData = [
     let activeSelectedPin = null; 
     let favorites = JSON.parse(localStorage.getItem('festival_favs')) || [];
     
-    // 5回タップ制御変数
     let titleTapCount = 0;
     let titleTapTimeout;
     let currentActiveServerDelay = null;
     let isInitialLoad = true;
 
-    // 遅延の正本。値は「そのイベント自身の遅延分数」で、累積値は保存しない。
     let scheduleDelayMap = {};
     let currentAdminDay = 1;
     let currentAdminDelayMinutes = 0;
@@ -1009,6 +1003,7 @@ const shopData = [
 
     const MAP_WIDTH = 1000;
     const MAP_HEIGHT = 800;
+
     window.onload = function() {
         initToggleState();
         buildFloorTabs();
@@ -1033,22 +1028,21 @@ const shopData = [
 
         const noticeContainer = document.getElementById('notice-list-container');
         if (noticeContainer) {
-			noticeContainer.innerHTML = noticeData.map(d => `
-    <li class="greeting-card">
-        <b>${d.title}</b>
-        <span style="display:block;color:var(--text-sub);font-size:0.8rem;margin-top:4px;white-space:pre-line;">${d.sub}</span>
-    </li>
-`).join('');
-                   }
+            noticeContainer.innerHTML = noticeData.map(d => `
+                <li class="greeting-card">
+                    <b>${d.title}</b>
+                    <span style="display:block;color:var(--text-sub);font-size:0.8rem;margin-top:4px;white-space:pre-line;">${d.sub}</span>
+                </li>
+            `).join('');
+        }
         
-        // Firebase Realtime Databaseの変更をリアルタイム監視
         initBroadcastListener();
         initScheduleDelayListener();
         initAdminSelect(currentAdminDay);
         updateNotificationStatusUI();
         startFavoriteNotificationChecker();
     };
-    // --- 🔐 5回タップ処理 ---
+
     function handleTitleTap() {
         clearTimeout(titleTapTimeout);
         titleTapCount++;
@@ -1058,7 +1052,7 @@ const shopData = [
         }
         titleTapTimeout = setTimeout(() => { titleTapCount = 0; }, 2000);
     }
-    // --- 🔐 メールアドレス＋パスワード認証 / UIDベース管理者判定 ---
+
     let currentUserIsAdmin = false;
 
     function showAuthError(message) {
@@ -1096,21 +1090,12 @@ const shopData = [
         }
 
         try {
-            // 自分のUIDだけを確認する。
-            // Firebase Rules側でも admins/{uid} の読み取りを本人だけに制限する。
             const snapshot = await firebase.database()
                 .ref('admins/' + user.uid + '/role')
                 .once('value');
 
             currentUserIsAdmin = snapshot.val() === 'admin';
             setAdminPanelButtonVisible(currentUserIsAdmin);
-
-            console.log(
-                currentUserIsAdmin
-                    ? '管理者として認証されました。UID:'
-                    : '一般ユーザーとしてログインしています。UID:',
-                user.uid
-            );
 
             return currentUserIsAdmin;
         } catch (error) {
@@ -1163,11 +1148,8 @@ const shopData = [
         }
 
         try {
-            // ブラウザを閉じても認証状態を維持
             await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-
             await firebase.auth().signInWithEmailAndPassword(email, password);
-
             if (passwordEl) passwordEl.value = '';
 
         } catch (error) {
@@ -1231,7 +1213,6 @@ const shopData = [
             return;
         }
 
-        // UIだけでなく、管理画面を開く瞬間にも再確認
         const isAdmin = await checkAdminRole(user);
 
         if (!isAdmin) {
@@ -1244,11 +1225,6 @@ const shopData = [
         openModal('modal-admin');
     }
 
-    function checkRedirectResult() {
-        // メール/パスワード方式ではリダイレクトログインを使用しない。
-        // 旧Googleログインの残りセッションがあっても、onAuthStateChangedで処理する。
-        return Promise.resolve();
-    }
     function checkMenuHintBalloon() {
         const hasSeenHint = localStorage.getItem('menu_hint_balloon_seen');
         const hintEl = document.getElementById('menu-hint');
@@ -1270,6 +1246,7 @@ const shopData = [
             toggleInput.checked = (savedState !== 'false');
         }
     }
+
     function buildFloorTabs() {
         const defaultFloors = ['1F', '2F', '3F', '4F'];
         const dataFloors = shopData.map(s => s.floor);
@@ -1288,6 +1265,7 @@ const shopData = [
         const titleEl = document.getElementById('floor-title');
         if (titleEl) titleEl.innerText = `${displayTitle}の出店一覧`;
     }
+
     function buildDayTabs() {
         const days = Array.from(new Set(timeScheduleData.map(t => t.day))).sort((a,b) => a-b);
         const container = document.getElementById('day-tab-container');
@@ -1298,6 +1276,7 @@ const shopData = [
             }).join('');
         }
     }
+
     function initImageMap() {
         if (map) { map.remove(); }
         map = L.map('map', {
@@ -1314,6 +1293,7 @@ const shopData = [
         updateMapFloorImage();
         map.on('click', function() { resetActivePinStyle(); });
     }
+
     function updateMapFloorImage() {
         if (currentImageLayer) { map.removeLayer(currentImageLayer); }
         const imageUrl = MAP_IMAGES[currentFloor] || 'map1f.png';
@@ -1321,6 +1301,7 @@ const shopData = [
         map.setView([MAP_HEIGHT / 2, MAP_WIDTH / 2], -0.4); 
         updateMapMarkers();
     }
+
     function switchPage(pageId) {
         document.querySelectorAll('.app-page').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.page-tab-btn').forEach(b => b.classList.remove('active'));
@@ -1331,6 +1312,9 @@ const shopData = [
         if(window.event && window.event.currentTarget) {
             window.event.currentTarget.classList.add('active');
         }
+
+        logGA4Event('page_view_custom', { page_id: pageId });
+
         if(pageId === 'map-page' && map) {
             setTimeout(() => { map.invalidateSize(); map.setView([MAP_HEIGHT / 2, MAP_WIDTH / 2], -0.4); }, 200);
         }
@@ -1340,8 +1324,11 @@ const shopData = [
             renderTimeSchedule();
         }
     }
+
     function switchFloor(floor) {
         currentFloor = floor;
+        logGA4Event('select_floor', { floor: floor });
+
         const container = document.getElementById('floor-tab-container');
         if (container) {
             container.querySelectorAll('.tab-btn').forEach(b => {
@@ -1357,8 +1344,11 @@ const shopData = [
         renderShops();
         updateMapFloorImage();
     }
+
     function switchDay(day) {
         currentDay = day;
+        logGA4Event('switch_schedule_day', { day: day });
+
         const container = document.getElementById('day-tab-container');
         if (container) {
             container.querySelectorAll('.day-btn').forEach(b => {
@@ -1369,7 +1359,6 @@ const shopData = [
         renderTimeSchedule();
     }
 
-    /* 📍 一体型マーカーの生成処理へ変更 */
     function updateMapMarkers() {
         if (markersLayerGroup) {
             markersLayerGroup.clearLayers();
@@ -1381,7 +1370,6 @@ const shopData = [
             if (shop.genre === '食品販売') pinColorClass = "pin-food";
             else if (shop.genre === '体験・アトラクション') pinColorClass = "pin-dot-play";
             
-            // ピンとポップアップをHTML内で完全に一体化
             const customIcon = L.divIcon({
                 html: `
                     <div class="pin-container" id="marker-container-${shop.id}">
@@ -1414,6 +1402,9 @@ const shopData = [
         const toggleEl = document.getElementById('map-delay-toggle');
         const isChecked = toggleEl ? toggleEl.checked : true;
         localStorage.setItem('map_delay_display_enabled', isChecked ? 'true' : 'false');
+        
+        logGA4Event('toggle_map_delay_display', { enabled: isChecked });
+
         if (!isChecked) {
             const alertBar = document.getElementById('global-alert');
             if (alertBar) alertBar.style.display = 'none';
@@ -1421,6 +1412,7 @@ const shopData = [
             refreshGlobalAlertBarDisplay();
         }
     }
+
     function highlightPin(shopId) {
         resetActivePinStyle();
         const pinContainer = document.getElementById(`marker-container-${shopId}`);
@@ -1429,20 +1421,37 @@ const shopData = [
             activeSelectedPin = pinContainer;
         }
     }
+
     function resetActivePinStyle() {
         if (activeSelectedPin) {
             activeSelectedPin.classList.remove('selected');
             activeSelectedPin = null;
         }
     }
+
     function openShopDetailFromMap(shopId) {
         document.querySelectorAll('.shop-details').forEach(d => d.classList.remove('open'));
         const detailDiv = document.getElementById(`details-${shopId}`);
+        const shop = shopData.find(s => s.id === shopId);
+
         if (detailDiv) {
             detailDiv.classList.add('open');
             detailDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
+
+        if (shop) {
+            logGA4Event('select_content', {
+                content_type: 'shop_detail',
+                item_id: shop.id.toString(),
+                item_name: shop.title,
+                genre: shop.genre,
+                floor: shop.floor,
+                location: shop.location,
+                opened_from: 'map_pin'
+            });
+        }
     }
+
     function renderShops() {
         const container = document.getElementById('shop-list-container');
         if (!container) return;
@@ -1485,8 +1494,19 @@ const shopData = [
             container.appendChild(card);
         });
     }
+
     function panToCoordinates(x, y, shopId, targetFloor) {
         if (x === null || y === null) return;
+
+        const shop = shopData.find(s => s.id === shopId);
+        if (shop) {
+            logGA4Event('select_item_map', {
+                item_id: shop.id.toString(),
+                item_name: shop.title,
+                floor: targetFloor
+            });
+        }
+
         if (currentFloor !== targetFloor) { 
             switchFloor(targetFloor); 
         }
@@ -1498,12 +1518,34 @@ const shopData = [
         const scrollArea = document.querySelector('.scrollable-content');
         if (scrollArea) scrollArea.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
     function toggleAccordion(id) {
         const detail = document.getElementById(`details-${id}`);
-        if (detail) detail.classList.toggle('open');
+        if (!detail) return;
+
+        const isOpening = !detail.classList.contains('open');
+        detail.classList.toggle('open');
+
+        if (isOpening) {
+            const shop = shopData.find(s => s.id === id);
+            if (shop) {
+                logGA4Event('select_content', {
+                    content_type: 'shop_detail',
+                    item_id: shop.id.toString(),
+                    item_name: shop.title,
+                    genre: shop.genre,
+                    floor: shop.floor,
+                    location: shop.location,
+                    opened_from: 'list_accordion'
+                });
+            }
+        }
     }
+
     function filterTag(tag, element) {
         selectedTag = tag;
+        logGA4Event('filter_genre', { genre: tag });
+
         document.querySelectorAll('.tag-btn').forEach(b => b.className = "tag-btn");
         if(tag === 'すべて') element.classList.add('active-all');
         else if(tag === '食品販売') element.classList.add('active-food');
@@ -1511,6 +1553,7 @@ const shopData = [
         else if(tag === '体験・アトラクション') element.classList.add('active-play');
         renderShops();
     }
+
     function filterSidebarShops() {
         const searchBox = document.getElementById('sidebar-search-box');
         if (!searchBox) return;
@@ -1520,17 +1563,26 @@ const shopData = [
         
         resultsContainer.innerHTML = '';
         if (query === '') return;
+
+        // 個人情報漏洩防止のため検索文字列自体はログに含めず、件数等のみ送信
+        logGA4Event('search_shop', { query_length: query.length });
+
         shopData.filter(shop => shop.title.includes(query) || shop.menu.includes(query)).forEach(shop => {
             let genreClass = "genre-exhibit";
             if(shop.genre === '食品販売') genreClass = "genre-food";
             else if(shop.genre === '体験・アトラクション') genreClass = "genre-play";
             const item = document.createElement('button');
             item.className = `sidebar-result-item ${genreClass}`;
-            item.onclick = () => { toggleSidebar(); if (shop.x !== null && shop.y !== null) panToCoordinates(shop.x, shop.y, shop.id, shop.floor); else switchFloor(shop.floor); };
+            item.onclick = () => { 
+                toggleSidebar(); 
+                if (shop.x !== null && shop.y !== null) panToCoordinates(shop.x, shop.y, shop.id, shop.floor); 
+                else switchFloor(shop.floor); 
+            };
             item.innerHTML = `<div><span class="sidebar-result-floor">${shop.floor}</span><span class="sidebar-result-title">${shop.title}</span></div>`;
             resultsContainer.appendChild(item);
         });
     }
+
     function buildAllShopsModalList() {
         const container = document.getElementById('all-shops-modal-container');
         if (!container) return;
@@ -1558,6 +1610,73 @@ const shopData = [
             container.appendChild(btn);
         });
     }
+
+    // Modal Control & GA4
+    function openModal(id) {
+        const m = document.getElementById(id);
+        if (m) m.classList.add('show');
+        logGA4Event('open_modal', { modal_id: id });
+    }
+
+    function closeModal(id) {
+        const m = document.getElementById(id);
+        if (m) m.classList.remove('show');
+    }
+
+    function closeModalOnOverlay(e, id) {
+        if (e.target.id === id) closeModal(id);
+    }
+
+    function toggleSidebar() {
+        const sb = document.getElementById('sidebar');
+        const ov = document.getElementById('menu-overlay');
+        const isOpen = sb.classList.contains('open');
+        
+        if (isOpen) {
+            sb.classList.remove('open');
+            ov.classList.remove('show');
+        } else {
+            sb.classList.add('open');
+            ov.classList.add('show');
+        }
+        logGA4Event('toggle_menu', { state: isOpen ? 'close' : 'open' });
+    }
+
+    function checkFirstAccessWelcome() {
+        const hasSeen = localStorage.getItem('welcome_modal_seen');
+        if (!hasSeen) {
+            openModal('modal-welcome-push');
+            logGA4Event('first_visit_welcome');
+        }
+    }
+
+    function closeWelcomeModal() {
+        localStorage.setItem('welcome_modal_seen', 'true');
+        closeModal('modal-welcome-push');
+    }
+
+    // Favorites Management with GA4
+    function toggleFavorite(id) {
+        const index = favorites.indexOf(id);
+        let action = '';
+        if (index > -1) {
+            favorites.splice(index, 1);
+            action = 'remove';
+        } else {
+            favorites.push(id);
+            action = 'add';
+        }
+        localStorage.setItem('festival_favs', JSON.stringify(favorites));
+        renderTimeSchedule();
+
+        const slot = timeScheduleData.find(t => t.id === id);
+        logGA4Event('toggle_favorite', {
+            item_id: id.toString(),
+            item_name: slot ? slot.name : 'unknown',
+            action: action
+        });
+    }
+
     // ==========================================
     // ⏱️ スケジュール遅延処理
     // ==========================================
@@ -1586,399 +1705,121 @@ const shopData = [
     }
 
     function shiftTimeRange(originalTimeRange, delayMinutes) {
-        const parts = String(originalTimeRange).split('-');
+        if (!delayMinutes || delayMinutes <= 0) return originalTimeRange;
+        const parts = originalTimeRange.split('-').map(s => s.trim());
         if (parts.length !== 2) return originalTimeRange;
 
-        const start = timeToMinutes(parts[0]);
-        const end = timeToMinutes(parts[1]);
-        if (start === null || end === null) return originalTimeRange;
+        const startMin = timeToMinutes(parts[0]);
+        const endMin = timeToMinutes(parts[1]);
+        if (startMin === null || endMin === null) return originalTimeRange;
 
-        const delay = parseDelayMinutes(delayMinutes);
-        return `${minutesToTime(start + delay)} - ${minutesToTime(end + delay)}`;
+        return `${minutesToTime(startMin + delayMinutes)} - ${minutesToTime(endMin + delayMinutes)}`;
     }
 
-    // ==========================================
-    // ⏰ スケジュール表示
-    // ※遅延は「そのイベント自身」だけに反映し、
-    //   後ろのイベントには一切繰り下げません。
-    // ==========================================
-    function getDayScheduleWithCumulativeDelay(day) {
-        return timeScheduleData
-            .filter(slot => Number(slot.day) === Number(day))
-            .slice()
-            .sort((a, b) => {
-                const at = timeToMinutes(String(a.time).split('-')[0]);
-                const bt = timeToMinutes(String(b.time).split('-')[0]);
-                return (at ?? 0) - (bt ?? 0);
-            })
-            .map(slot => {
-                const ownDelay = parseDelayMinutes(
-                    scheduleDelayMap?.[String(slot.day)]?.[String(slot.id)] ?? slot.delay ?? 0
-                );
+    function calculateCumulativeDelay(day, targetId) {
+        const dayEvents = timeScheduleData
+            .filter(item => Number(item.day) === Number(day))
+            .sort((a, b) => Number(a.id) - Number(b.id));
 
-                return {
-                    ...slot,
-                    ownDelay,
-                    cumulativeDelay: ownDelay,
-                    displayedTime: ownDelay > 0
-                        ? shiftTimeRange(slot.time, ownDelay)
-                        : slot.time
-                };
-            });
+        let cumulative = 0;
+        for (const ev of dayEvents) {
+            const selfDelay = parseDelayMinutes(scheduleDelayMap[ev.id]);
+            cumulative += selfDelay;
+            if (Number(ev.id) === Number(targetId)) break;
+        }
+        return cumulative;
     }
 
     function renderTimeSchedule() {
         const container = document.getElementById('timeline-container');
         if (!container) return;
-        container.innerHTML = '';
 
-        getDayScheduleWithCumulativeDelay(currentDay).forEach(slot => {
-            const isDelayed = slot.ownDelay > 0;
+        const currentDayEvents = timeScheduleData.filter(item => Number(item.day) === Number(currentDay));
+
+        if (currentDayEvents.length === 0) {
+            container.innerHTML = '<p style="text-align:center; color:#9ca3af; padding:20px;">この日のスケジュールはありません</p>';
+            return;
+        }
+
+        container.innerHTML = currentDayEvents.map(slot => {
             const isFav = favorites.includes(slot.id);
+            const cumulativeDelay = calculateCumulativeDelay(slot.day, slot.id);
+            const isDelayed = cumulativeDelay > 0;
+            const displayTime = isDelayed ? shiftTimeRange(slot.time, cumulativeDelay) : slot.time;
 
-            const statusHtml = isDelayed
-                ? `⚠️ このイベントが ${slot.ownDelay}分遅延`
-                : '✅ 通常通り';
-
-            const calcTimeHtml = isDelayed
-                ? `<span class="delayed-time-calc">➡️ 変更後：${slot.displayedTime}</span>`
-                : '';
-
-            const div = document.createElement('div');
-            div.className = `time-slot ${isDelayed ? 'status-delayed' : ''}`;
-            div.innerHTML = `
-                <div>
-                    <span class="time-text">${slot.time}${calcTimeHtml}</span>
-                    <div class="band-name">${slot.name}</div>
-                    <span class="band-status ${isDelayed ? 'delayed' : ''}">${statusHtml}</span>
+            return `
+                <div class="time-slot ${isDelayed ? 'status-delayed' : ''}">
+                    <div>
+                        <div class="time-text">${slot.time}</div>
+                        <div class="band-name">${slot.name}</div>
+                        ${isDelayed ? `
+                            <div class="delayed-time-calc">
+                                ⚠️ ${cumulativeDelay}分遅れ予定（変更後: ${displayTime}）
+                            </div>
+                        ` : ''}
+                    </div>
+                    <button class="fav-btn ${isFav ? 'active' : ''}" onclick="toggleFavorite(${slot.id})">
+                        <i class="fa-${isFav ? 'solid' : 'regular'} fa-star"></i>
+                    </button>
                 </div>
-                <button class="fav-btn ${isFav ? 'active' : ''}" onclick="toggleFavorite(${slot.id})">★</button>
             `;
-            container.appendChild(div);
-        });
-    }
-
-    function toggleFavorite(id) {
-        if (favorites.includes(id)) {
-            favorites = favorites.filter(fid => fid !== id);
-        } else {
-            favorites.push(id);
-        }
-        localStorage.setItem('festival_favs', JSON.stringify(favorites));
-        renderTimeSchedule();
-    }
-
-    // モーダル・サイドバーの制御関数
-    function toggleSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('menu-overlay');
-        if (sidebar && overlay) {
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('show');
-        }
-    }
-
-    function openModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) modal.classList.add('show');
-        if (modalId === 'modal-push') updateNotificationStatusUI();
-    }
-
-    function closeModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) modal.classList.remove('show');
-    }
-
-    function closeModalOnOverlay(event, modalId) {
-        if (event.target.id === modalId) {
-            closeModal(modalId);
-        }
-    }
-
-    // ==========================================
-    // 🛠️ 管理者パネル：日程→イベント→ダイヤル
-    // ==========================================
-
-    function initAdminSelect(day = currentAdminDay) {
-        currentAdminDay = Number(day) || 1;
-
-        const dayContainer = document.getElementById('admin-day-selector');
-        if (dayContainer) {
-            const days = Array.from(new Set(timeScheduleData.map(t => Number(t.day))))
-                .sort((a, b) => a - b);
-
-            dayContainer.innerHTML = days.map(d => `
-                <button type="button"
-                        class="admin-day-btn ${d === currentAdminDay ? 'active' : ''}"
-                        onclick="selectAdminDay(${d})">
-                    ${d}日目
-                </button>
-            `).join('');
-        }
-
-        const selectEl = document.getElementById('admin-target-select');
-        if (!selectEl) return;
-
-        const daySlots = timeScheduleData
-            .filter(slot => Number(slot.day) === currentAdminDay)
-            .slice()
-            .sort((a, b) => (timeToMinutes(String(a.time).split('-')[0]) ?? 0) -
-                            (timeToMinutes(String(b.time).split('-')[0]) ?? 0));
-
-        selectEl.innerHTML = '';
-
-        daySlots.forEach(slot => {
-            const opt = document.createElement('option');
-            opt.value = String(slot.id);
-            opt.setAttribute('data-name', slot.name);
-            opt.setAttribute('data-day', String(slot.day));
-            opt.innerText = `${slot.name}（${slot.time}）`;
-            selectEl.appendChild(opt);
-        });
-
-        loadSelectedEventDelay();
-    }
-
-    function selectAdminDay(day) {
-        initAdminSelect(Number(day));
-    }
-
-    function getSelectedAdminSlot() {
-        const selectEl = document.getElementById('admin-target-select');
-        if (!selectEl || selectEl.selectedIndex === -1) return null;
-
-        const id = String(selectEl.value);
-        const day = Number(currentAdminDay);
-        return timeScheduleData.find(slot =>
-            Number(slot.day) === day && String(slot.id) === id
-        ) || null;
-    }
-
-    // ==========================================
-    // 🛠️ 管理者パネル：カチカチ式遅延設定
-    // ==========================================
-    function getClampedDelayValue(minutes) {
-        const parsed = parseInt(minutes, 10);
-        if (Number.isNaN(parsed)) return 0;
-        return Math.max(0, Math.min(60, parsed));
-    }
-
-    function setDelayStepperValue(minutes) {
-        const value = getClampedDelayValue(minutes);
-        currentAdminDelayMinutes = value;
-
-        const valueEl = document.getElementById('delay-value');
-        if (valueEl) valueEl.innerText = `${value}分`;
-
-        const currentEl = document.getElementById('admin-current-delay');
-        const slot = getSelectedAdminSlot();
-        if (currentEl && slot) {
-            const saved = parseDelayMinutes(
-                scheduleDelayMap?.[String(slot.day)]?.[String(slot.id)] ?? slot.delay ?? 0
-            );
-            currentEl.innerText = saved > 0
-                ? `現在保存されている値：${saved}分`
-                : '現在保存されている値：通常進行（0分）';
-        }
-    }
-
-    function changeDelayStepper(amount) {
-        setDelayStepperValue(currentAdminDelayMinutes + Number(amount || 0));
-    }
-
-    function loadSelectedEventDelay() {
-        const slot = getSelectedAdminSlot();
-        if (!slot) {
-            setDelayStepperValue(0);
-            return;
-        }
-
-        const saved = parseDelayMinutes(
-            scheduleDelayMap?.[String(slot.day)]?.[String(slot.id)] ?? slot.delay ?? 0
-        );
-        setDelayStepperValue(saved);
-    }
-
-    // ==========================================
-    // 🔔 ブラウザ通知（FCMなし・ページを開いている間の通知）
-    // ==========================================
-    function isNotificationSupported() {
-        return 'Notification' in window;
-    }
-
-    function updateNotificationStatusUI() {
-        const btn = document.getElementById('change-notification-btn');
-        const status = document.getElementById('notification-status-text');
-        if (!btn || !status) return;
-
-        if (!isNotificationSupported()) {
-            btn.disabled = true;
-            btn.style.opacity = '0.55';
-            status.innerText = 'このブラウザでは通知機能を利用できません。';
-            return;
-        }
-
-        const permission = Notification.permission;
-        if (permission === 'granted') {
-            btn.innerText = '✅ 通知は許可されています';
-            btn.style.background = '#16a34a';
-            status.innerText = 'お気に入りの予定や遅延情報を、このページが開いている間にお知らせします。';
-        } else if (permission === 'denied') {
-            btn.innerText = '⚙️ 通知設定を確認する';
-            btn.style.background = '#6b7280';
-            status.innerText = '通知がブロックされています。ブラウザまたは端末のサイト通知設定から許可してください。';
-        } else {
-            btn.innerText = '🔔 通知を許可する';
-            btn.style.background = '#28a745';
-            status.innerText = '通知を許可すると、お気に入りの予定や遅延情報をお知らせします。';
-        }
-    }
-
-    async function requestBrowserNotificationPermission() {
-        if (!isNotificationSupported()) {
-            alert('このブラウザでは通知機能を利用できません。');
-            return;
-        }
-
-        if (Notification.permission === 'denied') {
-            alert('通知がブロックされています。ブラウザまたは端末のサイト通知設定から、このサイトの通知を許可してください。');
-            updateNotificationStatusUI();
-            return;
-        }
-
-        try {
-            const permission = await Notification.requestPermission();
-            updateNotificationStatusUI();
-            if (permission === 'granted') {
-                new Notification('厚木王子 文化祭案内', {
-                    body: '通知設定が完了しました。お気に入りの予定や遅延情報をお知らせします。'
-                });
-            }
-        } catch (error) {
-            console.error('Notification permission error:', error);
-            alert('通知設定を変更できませんでした。');
-        }
-    }
-
-    function sendBrowserNotification(title, body, tag) {
-        if (!isNotificationSupported() || Notification.permission !== 'granted') return;
-        try {
-            new Notification(title, { body, tag });
-        } catch (error) {
-            console.error('Browser notification error:', error);
-        }
+        }).join('');
     }
 
     function showScheduleNotificationHint() {
-        const hint = document.getElementById('schedule-notice-hint');
-        if (!hint || scheduleHintShownThisSession) return;
-        scheduleHintShownThisSession = true;
-        hint.style.display = 'block';
+        if (scheduleHintShownThisSession) return;
+        const el = document.getElementById('schedule-notice-hint');
+        if (el && Notification && Notification.permission !== 'granted') {
+            el.style.display = 'block';
+            scheduleHintShownThisSession = true;
+        }
     }
 
     function openNotificationSettingsFromSchedule() {
         openModal('modal-push');
-        updateNotificationStatusUI();
     }
 
-    // 📅 お気に入り通知で使う文化祭の日付
-    // 日付が変更になった場合は、ここだけ変更してください。
-    const FESTIVAL_DATES = {
-        1: '09-05',
-        2: '09-06'
-    };
-
-    function getFestivalDateForDay(day) {
-        const md = FESTIVAL_DATES[Number(day)];
-        if (!md) return null;
-        return `${new Date().getFullYear()}-${md}`;
+    function closeAlertBar() {
+        const bar = document.getElementById('global-alert');
+        if (bar) bar.style.display = 'none';
     }
 
-    function parseScheduleStartDateTime(slot) {
-        const dateString = getFestivalDateForDay(slot.day);
-        if (!dateString) return null;
-        const startText = String(slot.time || '').split('-')[0].trim();
-        const parts = startText.split(':');
-        if (parts.length !== 2) return null;
-        const h = parseInt(parts[0], 10);
-        const m = parseInt(parts[1], 10);
-        if (Number.isNaN(h) || Number.isNaN(m)) return null;
-        const d = new Date(`${dateString}T${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:00`);
-        return Number.isNaN(d.getTime()) ? null : d;
-    }
+    function refreshGlobalAlertBarDisplay() {
+        const toggleEl = document.getElementById('map-delay-toggle');
+        const isEnabled = toggleEl ? toggleEl.checked : true;
+        const alertBar = document.getElementById('global-alert');
 
-    function startFavoriteNotificationChecker() {
-        if (notificationCheckTimer) clearInterval(notificationCheckTimer);
-        checkFavoriteScheduleNotifications();
-        notificationCheckTimer = setInterval(checkFavoriteScheduleNotifications, 15000);
-    }
+        if (!alertBar) return;
 
-    function checkFavoriteScheduleNotifications() {
-        if (!isNotificationSupported() || Notification.permission !== 'granted') return;
-
-        const now = new Date();
-        const currentYear = now.getFullYear();
-        const currentMonth = now.getMonth();
-        const currentDate = now.getDate();
-
-        getDayScheduleWithCumulativeDelay(1).concat(getDayScheduleWithCumulativeDelay(2)).forEach(slot => {
-            if (!favorites.includes(slot.id)) return;
-            const start = parseScheduleStartDateTime(slot);
-            if (!start) return;
-            if (start.getFullYear() !== currentYear || start.getMonth() !== currentMonth || start.getDate() !== currentDate) return;
-
-            const diff = start.getTime() - now.getTime();
-            const key = `${slot.day}-${slot.id}-${start.getTime()}`;
-            if (diff >= 0 && diff <= 10 * 60 * 1000 && !notifiedFavoriteKeys[key]) {
-                sendBrowserNotification(
-                    '🔔 お気に入りの予定が近づいています',
-                    `${slot.name} は ${slot.displayedTime.split(' - ')[0]} からの予定です。`,
-                    `favorite-${slot.day}-${slot.id}`
-                );
-                notifiedFavoriteKeys[key] = true;
-                localStorage.setItem('festival_notified_favorites', JSON.stringify(notifiedFavoriteKeys));
-            }
-        });
-    }
-
-    function cleanupNotificationMemory() {
-        const keep = {};
-        const now = Date.now();
-        Object.keys(notifiedFavoriteKeys).forEach(key => {
-            const parts = key.split('-');
-            const timestamp = Number(parts[parts.length - 1]);
-            if (Number.isFinite(timestamp) && now - timestamp < 7 * 24 * 60 * 60 * 1000) keep[key] = true;
-        });
-        notifiedFavoriteKeys = keep;
-        localStorage.setItem('festival_notified_favorites', JSON.stringify(notifiedFavoriteKeys));
-    }
-
-    function checkFirstAccessWelcome() {
-        const hasSeen = localStorage.getItem('festival_welcome_seen');
-        if (!hasSeen) {
-            setTimeout(() => {
-                openModal('modal-welcome-push');
-            }, 800);
+        if (!isEnabled || !currentActiveServerDelay || currentActiveServerDelay.trim() === '') {
+            alertBar.style.display = 'none';
+            return;
         }
+
+        const msgEl = document.getElementById('alert-message');
+        if (msgEl) msgEl.innerText = currentActiveServerDelay;
+        alertBar.style.display = 'flex';
     }
 
-    function closeWelcomeModal() {
-        localStorage.setItem('festival_welcome_seen', 'true');
-        closeModal('modal-welcome-push');
-    }
-
-    // ==========================================
-    // 📡 Firebase Realtime Database：遅延情報監視
-    // ==========================================
     function initBroadcastListener() {
         if (broadcastListenerStarted) return;
         broadcastListenerStarted = true;
 
-        FIREBASE_BROADCAST_REF.on('value', snapshot => {
-            const data = snapshot.val() || {};
-            applyBroadcastData(data);
-        }, error => {
-            console.error('Broadcast listener error:', error);
+        FIREBASE_BROADCAST_REF.on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (!data) return;
+
+            const message = data.message || '';
+            currentActiveServerDelay = message;
+
+            refreshGlobalAlertBarDisplay();
+
+            if (!isInitialLoad && message.trim() !== '') {
+                const textEl = document.getElementById('sync-alert-text');
+                if (textEl) textEl.innerText = message;
+                openModal('modal-sync-alert');
+            }
+            isInitialLoad = false;
         });
     }
 
@@ -1986,126 +1827,214 @@ const shopData = [
         if (scheduleDelayListenerStarted) return;
         scheduleDelayListenerStarted = true;
 
-        firebase.database().ref('broadcast/delays').on('value', snapshot => {
-            scheduleDelayMap = snapshot.val() || {};
+        firebase.database().ref('schedule_delays').on('value', (snapshot) => {
+            const val = snapshot.val() || {};
+            scheduleDelayMap = val;
             renderTimeSchedule();
-            refreshGlobalAlertBarDisplay();
-        }, error => {
-            console.error('Schedule delay listener error:', error);
+            if (document.getElementById('modal-admin')?.classList.contains('show')) {
+                loadSelectedEventDelay();
+            }
         });
     }
 
-    function getAllActiveDelayedSlots() {
-        const result = [];
-        Object.keys(scheduleDelayMap || {}).forEach(dayKey => {
-            const dayData = scheduleDelayMap[dayKey] || {};
-            Object.keys(dayData).forEach(eventKey => {
-                const delay = parseDelayMinutes(dayData[eventKey]);
-                if (delay <= 0) return;
-                const slot = timeScheduleData.find(item =>
-                    String(item.day) === String(dayKey) && String(item.id) === String(eventKey)
-                );
-                if (slot) result.push({ ...slot, ownDelay: delay });
-            });
-        });
-        return result;
-    }
+    // Push Notifications Logic & GA4
+    function updateNotificationStatusUI() {
+        const textEl = document.getElementById('notification-status-text');
+        const btnEl = document.getElementById('change-notification-btn');
+        if (!textEl || !btnEl) return;
 
-    function applyBroadcastData(data) {
-        const delays = data && data.delays ? data.delays : scheduleDelayMap;
-        if (delays && typeof delays === 'object') scheduleDelayMap = delays;
-
-        renderTimeSchedule();
-        refreshGlobalAlertBarDisplay();
-
-        if (isInitialLoad) {
-            isInitialLoad = false;
+        if (!("Notification" in window)) {
+            textEl.innerText = "ご利用のブラウザは通知に対応していません。";
+            btnEl.disabled = true;
+            btnEl.style.background = "#ccc";
             return;
         }
 
-        getAllActiveDelayedSlots().forEach(slot => {
-            // ⭐ 遅延通知は、そのイベントをお気に入り登録している人だけに送る。
+        if (Notification.permission === "granted") {
+            textEl.innerText = "現在：通知は「許可」されています。";
+            btnEl.innerText = "✅ 通知は許可されています";
+            btnEl.style.background = "#6c757d";
+        } else if (Notification.permission === "denied") {
+            textEl.innerText = "現在：通知が「ブロック」されています。下記の手順で解除してください。";
+            btnEl.innerText = "⚠️ 通知設定を確認する";
+            btnEl.style.background = "#dc3545";
+        } else {
+            textEl.innerText = "現在：通知は「未設定」です。ボタンを押して許可してください。";
+            btnEl.innerText = "🔔 通知を許可する";
+            btnEl.style.background = "#28a745";
+        }
+    }
+
+    function requestBrowserNotificationPermission() {
+        if (!("Notification" in window)) {
+            alert("このブラウザは通知機能に対応していません。");
+            return;
+        }
+
+        Notification.requestPermission().then(permission => {
+            updateNotificationStatusUI();
+            logGA4Event('notification_permission', { result: permission });
+
+            if (permission === "granted") {
+                new Notification("厚木王子 文化祭案内", {
+                    body: "通知設定が完了しました！遅延情報や予定をお知らせします。",
+                    icon: "1-1.png"
+                });
+            } else if (permission === "denied") {
+                alert("通知が拒否されました。設定を変更したい場合はブラウザのサイト設定から許可してください。");
+            }
+        });
+    }
+
+    function startFavoriteNotificationChecker() {
+        if (notificationCheckTimer) clearInterval(notificationCheckTimer);
+        notificationCheckTimer = setInterval(checkAndSendFavoriteNotifications, 30000);
+    }
+
+    function checkAndSendFavoriteNotifications() {
+        if (!("Notification" in window) || Notification.permission !== "granted") return;
+
+        const now = new Date();
+        const currentHHMM = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+        const currentMinutes = timeToMinutes(currentHHMM);
+
+        timeScheduleData.forEach(slot => {
             if (!favorites.includes(slot.id)) return;
 
-            const key = `${slot.day}-${slot.id}-${slot.ownDelay}`;
-            if (notifiedDelayKeys[key]) return;
+            const cumulativeDelay = calculateCumulativeDelay(slot.day, slot.id);
+            const originalParts = slot.time.split('-').map(s => s.trim());
+            const startMin = timeToMinutes(originalParts[0]);
+            if (startMin === null) return;
 
-            sendBrowserNotification(
-                '⚠️ お気に入りの予定が変更されました',
-                `${slot.name} が ${slot.ownDelay}分遅延しています。変更後：${slot.displayedTime || shiftTimeRange(slot.time, slot.ownDelay)}`,
-                `delay-${slot.day}-${slot.id}`
-            );
+            const adjustedStartMin = startMin + cumulativeDelay;
+            const diff = adjustedStartMin - currentMinutes;
 
-            const alertText = document.getElementById('sync-alert-text');
-            if (alertText) {
-                alertText.innerText = `お気に入り登録している「${slot.name}」が ${slot.ownDelay}分遅延しています。\n変更後：${slot.displayedTime || shiftTimeRange(slot.time, slot.ownDelay)}`;
-                openModal('modal-sync-alert');
+            const key5 = `${slot.id}_5min_${slot.day}`;
+            if (diff <= 5 && diff > 0 && !notifiedFavoriteKeys[key5]) {
+                new Notification("まもなく開始します！", {
+                    body: `⭐【お気に入り】${slot.name}\n開始予定: ${minutesToTime(adjustedStartMin)}`,
+                    icon: "1-1.png"
+                });
+                notifiedFavoriteKeys[key5] = true;
+                localStorage.setItem('festival_notified_favorites', JSON.stringify(notifiedFavoriteKeys));
             }
 
-            notifiedDelayKeys[key] = true;
-            localStorage.setItem('festival_notified_delays', JSON.stringify(notifiedDelayKeys));
+            if (cumulativeDelay > 0) {
+                const delayKey = `${slot.id}_delay_${cumulativeDelay}`;
+                if (!notifiedDelayKeys[delayKey]) {
+                    new Notification("ステージ開始時間の変更", {
+                        body: `⚠️【${slot.name}】\n進行の遅れに伴い、開始時間が ${minutesToTime(adjustedStartMin)} に変更されました。`,
+                        icon: "1-1.png"
+                    });
+                    notifiedDelayKeys[delayKey] = true;
+                    localStorage.setItem('festival_notified_delays', JSON.stringify(notifiedDelayKeys));
+                }
+            }
         });
     }
 
-    function refreshGlobalAlertBarDisplay() {
-        const alertBar = document.getElementById('global-alert');
-        const alertMessage = document.getElementById('alert-message');
-        const toggleEl = document.getElementById('map-delay-toggle');
-        const displayEnabled = toggleEl ? toggleEl.checked : localStorage.getItem('map_delay_display_enabled') !== 'false';
+    // Admin Stepper Control
+    function initAdminSelect(dayFilter) {
+        const dayToUse = dayFilter || currentAdminDay || 1;
+        currentAdminDay = dayToUse;
 
-        if (!alertBar || !displayEnabled) {
-            if (alertBar) alertBar.style.display = 'none';
-            return;
+        const daySelectorEl = document.getElementById('admin-day-selector');
+        if (daySelectorEl) {
+            const days = Array.from(new Set(timeScheduleData.map(t => t.day))).sort((a,b) => a-b);
+            daySelectorEl.innerHTML = days.map(d => `
+                <button type="button" class="admin-day-btn ${Number(d) === Number(dayToUse) ? 'active' : ''}" onclick="switchAdminDay(${d})">${d}日目</button>
+            `).join('');
         }
 
-        const activeSlots = getAllActiveDelayedSlots();
-        if (activeSlots.length === 0) {
-            alertBar.style.display = 'none';
-            currentActiveServerDelay = null;
-            return;
-        }
+        const selectEl = document.getElementById('admin-target-select');
+        if (!selectEl) return;
 
-        const maxDelay = Math.max(...activeSlots.map(s => s.ownDelay));
-        const names = activeSlots.slice(0, 2).map(s => s.name).join('・');
-        currentActiveServerDelay = maxDelay;
-        if (alertMessage) {
-            alertMessage.innerText = `予定変更：${names}${activeSlots.length > 2 ? ' ほか' : ''}（最大${maxDelay}分遅延）`;
-        }
-        alertBar.style.display = 'flex';
+        const filteredEvents = timeScheduleData.filter(t => Number(t.day) === Number(dayToUse));
+
+        selectEl.innerHTML = filteredEvents.map(t => `
+            <option value="${t.id}">${t.time} - ${t.name}</option>
+        `).join('');
+
+        loadSelectedEventDelay();
     }
 
-    function closeAlertBar() {
-        const alertBar = document.getElementById('global-alert');
-        if (alertBar) alertBar.style.display = 'none';
+    function switchAdminDay(day) {
+        currentAdminDay = day;
+        initAdminSelect(day);
+    }
+
+    function loadSelectedEventDelay() {
+        const selectEl = document.getElementById('admin-target-select');
+        if (!selectEl) return;
+
+        const selectedId = selectEl.value;
+        const currentDelay = parseDelayMinutes(scheduleDelayMap[selectedId]);
+
+        setDelayStepperValue(currentDelay);
+
+        const infoEl = document.getElementById('admin-current-delay');
+        if (infoEl) {
+            infoEl.innerText = currentDelay > 0
+                ? `現在設定中の遅延: ＋${currentDelay}分`
+                : `現在設定中の遅延: なし (0分)`;
+        }
+    }
+
+    function changeDelayStepper(delta) {
+        setDelayStepperValue(currentAdminDelayMinutes + delta);
+    }
+
+    function setDelayStepperValue(val) {
+        let nextVal = parseInt(val, 10);
+        if (Number.isNaN(nextVal)) nextVal = 0;
+        nextVal = Math.max(0, Math.min(60, nextVal));
+
+        currentAdminDelayMinutes = nextVal;
+
+        const valEl = document.getElementById('delay-value');
+        if (valEl) valEl.innerText = `${nextVal}分`;
     }
 
     async function submitAdminBroadcast() {
         if (!currentUserIsAdmin) {
-            alert('管理者権限がありません。');
+            alert('送信権限がありません。ログインし直してください。');
             return;
         }
 
-        const slot = getSelectedAdminSlot();
-        if (!slot) {
-            alert('遅延対象イベントを選択してください。');
+        const selectEl = document.getElementById('admin-target-select');
+        if (!selectEl) return;
+
+        const selectedId = selectEl.value;
+        const targetEvent = timeScheduleData.find(t => String(t.id) === String(selectedId));
+
+        if (!targetEvent) {
+            alert('対象イベントが正しく選択されていません。');
             return;
         }
 
-        const finalMinutes = getClampedDelayValue(currentAdminDelayMinutes);
-        const path = `broadcast/delays/${slot.day}/${slot.id}`;
+        const delayMinutes = currentAdminDelayMinutes;
 
         try {
-            // 「そのイベント自身の遅延分」を保存。再設定時も加算せず置き換える。
-            await firebase.database().ref(path).set(finalMinutes);
-            scheduleDelayMap[String(slot.day)] = scheduleDelayMap[String(slot.day)] || {};
-            scheduleDelayMap[String(slot.day)][String(slot.id)] = finalMinutes;
-            renderTimeSchedule();
-            refreshGlobalAlertBarDisplay();
-            alert(`【${slot.name}】の遅延時間を ${finalMinutes}分 で保存しました。`);
+            await firebase.database().ref(`schedule_delays/${selectedId}`).set(delayMinutes);
+
+            let broadcastMsg = "";
+            if (delayMinutes > 0) {
+                broadcastMsg = `【遅延速報】${targetEvent.name} は約${delayMinutes}分遅れて進行しています。`;
+            } else {
+                broadcastMsg = `【進行案内】${targetEvent.name} の遅延設定が解除されました。`;
+            }
+
+            await FIREBASE_BROADCAST_REF.set({
+                message: broadcastMsg,
+                updatedAt: firebase.database.ServerValue.TIMESTAMP
+            });
+
+            alert(`配信完了:\n${targetEvent.name} ➡️ 遅延${delayMinutes}分`);
             closeModal('modal-admin');
-        } catch(e) {
-            console.error('Delay save error:', e);
-            alert('配信に失敗しました。Firebaseの接続・権限を確認してください。');
+
+        } catch (error) {
+            console.error('Broadcast Error:', error);
+            alert('データベースの更新に失敗しました。権限または通信状態をご確認ください。');
         }
     }
 </script>
